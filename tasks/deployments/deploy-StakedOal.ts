@@ -44,7 +44,7 @@ task(`deploy-${StakedOasysLend}`, `Deploys the ${StakedOasysLend} contract`)
 
     console.log(`\tDeploying ${StakedOasysLend} implementation ...`);
     const admin = getAdminPerNetwork(network);
-    const StakedOasysLendImpl = await deployStakedOasysLend(
+    const stakedOasysLendImpl = await deployStakedOasysLend(
       [
         tokenAddress || getTokenPerNetwork(network),
         tokenAddress || getTokenPerNetwork(network),
@@ -56,8 +56,8 @@ task(`deploy-${StakedOasysLend}`, `Deploys the ${StakedOasysLend} contract`)
       ],
       false // disable verify due not supported by current buidler etherscan plugin
     );
-    await StakedOasysLendImpl.deployTransaction.wait();
-    await registerContractInJsonDb(StakedOasysLendImpl, StakedOasysLendImpl);
+    await stakedOasysLendImpl.deployTransaction.wait();
+    await registerContractInJsonDb(StakedOasysLendImpl, stakedOasysLendImpl);
 
     console.log(`\tDeploying ${StakedOasysLend} Transparent Proxy ...`);
     const stakedTokenProxy = await deployInitializableAdminUpgradeabilityProxy(

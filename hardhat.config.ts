@@ -28,7 +28,7 @@ const FORKING_BLOCK = parseInt(process.env.FORKING_BLOCK || '12369243');
 
 // Prevent to load scripts before compilation and typechain
 if (!SKIP_LOAD) {
-  ['misc', 'migrations', 'deployments', 'proposals'].forEach((folder) => {
+  ['misc', 'migrations', 'deployments'].forEach((folder) => {
     const tasksPath = path.join(__dirname, 'tasks', folder);
     fs.readdirSync(tasksPath)
       .filter((pth) => pth.includes('.ts'))

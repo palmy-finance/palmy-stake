@@ -9,7 +9,7 @@ import {
 } from '../../helpers/constants';
 import { getStakedOasysLendImpl, getStakedOasysLendProxy } from '../../helpers/contracts-accessors';
 
-const { StakedOasysLend } = eContractid;
+const { StakedOasysLend: StakedOasysLend } = eContractid;
 
 task(`initialize-${StakedOasysLend}`, `Initialize the ${StakedOasysLend} proxy contract`)
   .addParam(
