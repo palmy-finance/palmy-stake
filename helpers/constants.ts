@@ -9,7 +9,7 @@ export const COOLDOWN_SECONDS = '3600'; // 1 hour in seconds
 export const UNSTAKE_WINDOW = '1800'; // 30 min in seconds
 export const DISTRIBUTION_DURATION = '86400'; // 1 day in seconds
 
-export const STAKED_TOKEN_NAME = 'Staked OasysLend';
+export const STAKED_TOKEN_NAME = 'Staked Palmy';
 export const STAKED_TOKEN_SYMBOL = 'sOAL';
 export const STAKED_TOKEN_DECIMALS = 18;
 

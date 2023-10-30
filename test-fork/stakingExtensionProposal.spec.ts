@@ -12,11 +12,11 @@ import {
   impersonateAccountsHardhat,
 } from '../helpers/misc-utils';
 import { MAX_UINT_AMOUNT } from '../helpers/constants';
-import { IOasysLendGovernanceV2 } from '../types/IOasysLendGovernanceV2';
+import { IPalmyGovernanceV2 } from '../types/IPalmyGovernanceV2';
 import { ILendingPool } from '../types/ILendingPool';
 import {
-  StakedOasysLendV2,
-  StakedOasysLendV2__factory,
+  StakedPalmyV2,
+  StakedPalmyV2__factory,
   Erc20,
   SelfdestructTransfer__factory,
   Erc20__factory,
@@ -72,15 +72,15 @@ describe('Proposal: Extend Staked Oal distribution', () => {
   let whale: JsonRpcSigner;
   let daiHolder: JsonRpcSigner;
   let proposer: SignerWithAddress;
-  let gov: IOasysLendGovernanceV2;
+  let gov: IPalmyGovernanceV2;
   let pool: ILendingPool;
-  let oalToken: Erc20;
-  let oalBpt: Erc20;
+  let plmyToken: Erc20;
+  let plmyBpt: Erc20;
   let dai: Erc20;
   let aDAI: Erc20;
   let proposalId: BigNumber;
-  let StakedOasysLendV2: StakedOasysLendV2;
-  let bptStakeV2: StakedOasysLendV2;
+  let StakedPalmyV2: StakedPalmyV2;
+  let bptStakeV2: StakedPalmyV2;
   let stkOalImplAddress: string;
   let stkBptImplAddress: string;
   let stakedTokenV2Revision3Implementation: StakedTokenV2Rev3;
@@ -113,29 +113,29 @@ describe('Proposal: Extend Staked Oal distribution', () => {
 
     // Initialize contracts and tokens
     gov = (await ethers.getContractAt(
-      'IOasysLendGovernanceV2',
+      'IPalmyGovernanceV2',
       GOVERNANCE_V2,
       proposer
-    )) as IOasysLendGovernanceV2;
+    )) as IPalmyGovernanceV2;
     pool = (await ethers.getContractAt('ILendingPool', LENDING_POOL, proposer)) as ILendingPool;
 
     const { aTokenAddress } = await pool.getReserveData(DAI_TOKEN);
 
-    oalToken = Erc20__factory.connect(OAL_TOKEN, whale);
-    oalBpt = Erc20__factory.connect(BPT_POOL_TOKEN, bptWhale);
-    StakedOasysLendV2 = StakedOasysLendV2__factory.connect(STAKED_OAL, proposer);
-    bptStakeV2 = StakedOasysLendV2__factory.connect(BPT_STAKE, proposer);
+    plmyToken = Erc20__factory.connect(OAL_TOKEN, whale);
+    plmyBpt = Erc20__factory.connect(BPT_POOL_TOKEN, bptWhale);
+    StakedPalmyV2 = StakedPalmyV2__factory.connect(STAKED_OAL, proposer);
+    bptStakeV2 = StakedPalmyV2__factory.connect(BPT_STAKE, proposer);
     dai = Erc20__factory.connect(DAI_TOKEN, daiHolder);
     aDAI = Erc20__factory.connect(aTokenAddress, proposer);
 
     // Transfer enough OAL to proposer
-    await (await oalToken.transfer(proposer.address, parseEther('2000000'))).wait();
+    await (await plmyToken.transfer(proposer.address, parseEther('2000000'))).wait();
     // Transfer enough OAL to proposer
-    await (await oalToken.connect(whale2).transfer(proposer.address, parseEther('1200000'))).wait();
+    await (await plmyToken.connect(whale2).transfer(proposer.address, parseEther('1200000'))).wait();
     // Transfer DAI to repay future DAI loan
     await (await dai.transfer(proposer.address, parseEther('100000'))).wait();
     // Transfer OAL BPT pool shares to proposer
-    await (await oalBpt.transfer(proposer.address, parseEther('100'))).wait();
+    await (await plmyBpt.transfer(proposer.address, parseEther('100'))).wait();
   });
 
   it('Proposal should be created', async () => {
@@ -143,7 +143,7 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     const govToken = IDelegationAwareToken__factory.connect(OAL_TOKEN, proposer);
 
     try {
-      const balance = await oalToken.balanceOf(proposer.address);
+      const balance = await plmyToken.balanceOf(proposer.address);
       console.log('Token Balance proposer', formatEther(balance));
       const propositionPower = await govToken.getPowerAtBlock(
         proposer.address,
@@ -224,26 +224,26 @@ describe('Proposal: Extend Staked Oal distribution', () => {
 
   it('Users should be able to stake OAL', async () => {
     const amount = parseEther('10');
-    await waitForTx(await oalToken.connect(proposer).approve(StakedOasysLendV2.address, amount));
-    await expect(StakedOasysLendV2.connect(proposer).stake(proposer.address, amount)).to.emit(
-      StakedOasysLendV2,
+    await waitForTx(await plmyToken.connect(proposer).approve(StakedPalmyV2.address, amount));
+    await expect(StakedPalmyV2.connect(proposer).stake(proposer.address, amount)).to.emit(
+      StakedPalmyV2,
       'Staked'
     );
   });
 
-  it('Users should be able to redeem StakedOasysLend', async () => {
+  it('Users should be able to redeem StakedPalmy', async () => {
     const amount = parseEther('1');
     await increaseTimeAndMineTenderly(48600);
 
     try {
-      await waitForTx(await StakedOasysLendV2.cooldown({ gasLimit: 3000000 }));
+      await waitForTx(await StakedPalmyV2.cooldown({ gasLimit: 3000000 }));
 
-      const COOLDOWN_SECONDS = await StakedOasysLendV2.COOLDOWN_SECONDS();
+      const COOLDOWN_SECONDS = await StakedPalmyV2.COOLDOWN_SECONDS();
       await increaseTimeAndMineTenderly(Number(COOLDOWN_SECONDS.toString()));
 
       await expect(
-        StakedOasysLendV2.connect(proposer).redeem(proposer.address, amount, { gasLimit: 3000000 })
-      ).to.emit(StakedOasysLendV2, 'Redeem');
+        StakedPalmyV2.connect(proposer).redeem(proposer.address, amount, { gasLimit: 3000000 })
+      ).to.emit(StakedPalmyV2, 'Redeem');
     } catch (error) {
       logError();
       throw error;
@@ -252,7 +252,7 @@ describe('Proposal: Extend Staked Oal distribution', () => {
 
   it('Users should be able to stake OAL Pool BPT', async () => {
     const amount = parseEther('10');
-    await waitForTx(await oalBpt.connect(proposer).approve(bptStakeV2.address, amount));
+    await waitForTx(await plmyBpt.connect(proposer).approve(bptStakeV2.address, amount));
     await expect(bptStakeV2.connect(proposer).stake(proposer.address, amount)).to.emit(
       bptStakeV2,
       'Staked'
@@ -278,9 +278,9 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     }
   });
 
-  it('Users should be able to transfer StakedOasysLend', async () => {
-    await expect(StakedOasysLendV2.transfer(whale._address, parseEther('1'))).emit(
-      StakedOasysLendV2,
+  it('Users should be able to transfer StakedPalmy', async () => {
+    await expect(StakedPalmyV2.transfer(whale._address, parseEther('1'))).emit(
+      StakedPalmyV2,
       'Transfer'
     );
   });
@@ -291,13 +291,13 @@ describe('Proposal: Extend Staked Oal distribution', () => {
 
   it('Staked Oal Distribution End should be extended', async () => {
     const implDistributionEnd = await stakedTokenV2Revision3Implementation.DISTRIBUTION_END();
-    const proxyDistributionEnd = await StakedOasysLendV2.DISTRIBUTION_END();
+    const proxyDistributionEnd = await StakedPalmyV2.DISTRIBUTION_END();
 
     expect(implDistributionEnd).to.be.eq(proxyDistributionEnd, 'DISTRIBUTION_END SHOULD MATCH');
   });
   it('Staked Oal revision should be 3', async () => {
     const revisionImpl = await stakedTokenV2Revision3Implementation.REVISION();
-    const revisionProxy = await StakedOasysLendV2.REVISION();
+    const revisionProxy = await StakedPalmyV2.REVISION();
 
     expect(revisionImpl).to.be.eq(revisionProxy, 'DISTRIBUTION_END SHOULD MATCH');
     expect(revisionProxy).to.be.eq('3', 'DISTRIBUTION_END SHOULD MATCH');

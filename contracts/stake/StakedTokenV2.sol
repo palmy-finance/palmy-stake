@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import {ERC20} from '../stake-v1/contracts/open-zeppelin/ERC20.sol';
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedOasysLend} from '../interfaces/IStakedOasysLend.sol';
+import {IStakedPalmy} from '../interfaces/IStakedPalmy.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
@@ -22,7 +22,7 @@ import {GovernancePowerWithSnapshot} from '../lib/GovernancePowerWithSnapshot.so
  * @author Palmy finance
  **/
 contract StakedTokenV2 is
-  IStakedOasysLend,
+  IStakedPalmy,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
   DistributionManager

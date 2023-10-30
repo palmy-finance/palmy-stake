@@ -1,6 +1,6 @@
 import { tEthereumAddress } from '../helpers/types';
 import {
-  OasysLendProtocolDataProvider__factory,
+  PalmyProtocolDataProvider__factory,
   Erc20__factory,
   ILendingPoolAddressesProvider__factory,
 } from '../types';
@@ -61,7 +61,7 @@ export const getReserveConfigs = async (
     poolProviderAddress,
     proposer
   );
-  const protocolDataProvider = await OasysLendProtocolDataProvider__factory.connect(
+  const protocolDataProvider = await PalmyProtocolDataProvider__factory.connect(
     await poolProvider.getAddress(
       '0x0100000000000000000000000000000000000000000000000000000000000000'
     ),

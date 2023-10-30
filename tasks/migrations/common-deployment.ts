@@ -28,9 +28,9 @@ task('common-deployment', 'Deployment in for Main, Kovan networks')
       checkVerification();
     }
 
-    await DRE.run(`deploy-${eContractid.StakedOasysLend}`, { verify, vaultAddress, tokenAddress });
+    await DRE.run(`deploy-${eContractid.StakedPalmy}`, { verify, vaultAddress, tokenAddress });
 
-    await DRE.run(`initialize-${eContractid.StakedOasysLend}`, {
+    await DRE.run(`initialize-${eContractid.StakedPalmy}`, {
       admin: admin,
     });
 

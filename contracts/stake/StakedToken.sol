@@ -3,7 +3,7 @@ pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedOasysLend} from '../interfaces/IStakedOasysLend.sol';
+import {IStakedPalmy} from '../interfaces/IStakedPalmy.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 import {ERC20WithSnapshot} from '../lib/ERC20WithSnapshot.sol';
 import {SafeERC20} from '../lib/SafeERC20.sol';
@@ -18,7 +18,7 @@ import {SafeMath} from '../lib/SafeMath.sol';
  * @author Palmy finance
  **/
 contract StakedToken is
-  IStakedOasysLend,
+  IStakedPalmy,
   ERC20WithSnapshot,
   VersionedInitializable,
   DistributionManager

@@ -80,7 +80,7 @@ makeSuite('IncentivesController claimRewards tests', (testEnv) => {
     let amountToClaim = _amountToClaim;
     it(caseName, async () => {
       await increaseTimeAndMine(100);
-      const { incentivesController, stakedToken, oalToken, aDaiMock } = testEnv;
+      const { incentivesController, stakedToken, plmyToken, aDaiMock } = testEnv;
 
       const distributionEndTimestamp = await incentivesController.DISTRIBUTION_END();
       const userAddress = await incentivesController.signer.getAddress();
@@ -98,7 +98,7 @@ makeSuite('IncentivesController claimRewards tests', (testEnv) => {
 
       const destinationAddress = to || userAddress;
 
-      const destinationAddressBalanceBefore = await (toStake ? stakedToken : oalToken).balanceOf(
+      const destinationAddressBalanceBefore = await (toStake ? stakedToken : plmyToken).balanceOf(
         destinationAddress
       );
       await aDaiMock.setUserBalanceAndSupply(stakedByUser, totalStaked);
@@ -128,7 +128,7 @@ makeSuite('IncentivesController claimRewards tests', (testEnv) => {
 
       const unclaimedRewardsAfter = await incentivesController.getUserUnclaimedRewards(userAddress);
 
-      const destinationAddressBalanceAfter = await (toStake ? stakedToken : oalToken).balanceOf(
+      const destinationAddressBalanceAfter = await (toStake ? stakedToken : plmyToken).balanceOf(
         destinationAddress
       );
 

@@ -8,12 +8,12 @@ const { expect } = require('chai');
 
 makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
   it('User 1 stakes 50 Token', async () => {
-    const { stakedToken, oalToken: oalToken, users } = testEnv;
+    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
     const actions = () => [
-      oalToken.connect(staker.signer).approve(stakedToken.address, amount),
+      plmyToken.connect(staker.signer).approve(stakedToken.address, amount),
       stakedToken.connect(staker.signer).stake(staker.address, amount),
     ];
 
@@ -37,7 +37,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
   });
 
   it('User 5 transfers 50 sToken to user 2, with rewards not enabled', async () => {
-    const { stakedToken, oalToken: oalToken, users } = testEnv;
+    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const sender = users[5];
     const receiver = users[2];
@@ -60,7 +60,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
   });
 
   it('User 4 stakes and transfers 50 sToken to user 2, with rewards not enabled', async () => {
-    const { stakedToken, oalToken: oalToken, users } = testEnv;
+    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const sender = users[3];
     const receiver = users[2];
@@ -72,7 +72,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
     };
 
     const actions = () => [
-      oalToken.connect(sender.signer).approve(stakedToken.address, amount),
+      plmyToken.connect(sender.signer).approve(stakedToken.address, amount),
       stakedToken.connect(sender.signer).stake(sender.address, amount),
     ];
 
@@ -88,7 +88,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
     );
   });
   it('Activate cooldown of User2, transfer entire amount from User2 to User3, cooldown of User2 should be reset', async () => {
-    const { stakedToken, oalToken: oalToken, users } = testEnv;
+    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
     const sender = users[2];
     const receiver = users[3];
 
@@ -125,7 +125,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
   });
 
   it('Transfer balance from User 3 to user 2 cooldown  of User 2 should be reset if User3 cooldown expired', async () => {
-    const { stakedToken, oalToken: oalToken, users } = testEnv;
+    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('10');
     const sender = users[3];
     const receiver = users[2];
@@ -140,7 +140,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
     await stakedToken.connect(sender.signer).cooldown();
 
     // Then enable cooldown for receiver
-    await oalToken.connect(receiver.signer).approve(stakedToken.address, amount);
+    await plmyToken.connect(receiver.signer).approve(stakedToken.address, amount);
     await stakedToken.connect(receiver.signer).stake(receiver.address, amount);
     await stakedToken.connect(receiver.signer).cooldown();
     const receiverCooldown = await stakedToken.stakersCooldowns(sender.address);
@@ -149,7 +149,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
     await increaseTimeAndMine(
       receiverCooldown.add(COOLDOWN_SECONDS).add(UNSTAKE_WINDOW).add(1).toNumber()
     );
-    // Transfer staked oal from sender to receiver, it will also transfer the cooldown status from sender to the receiver
+    // Transfer staked plmy from sender to receiver, it will also transfer the cooldown status from sender to the receiver
     await compareRewardsAtTransfer(
       stakedToken,
       sender,
@@ -187,7 +187,7 @@ makeSuite('StakedToken. Transfers', (testEnv: TestEnv) => {
       await stakedToken.stakersCooldowns(receiver.address)
     ).toString();
 
-    // Transfer staked oal from sender to receiver, it will also transfer the cooldown status from sender to the receiver
+    // Transfer staked plmy from sender to receiver, it will also transfer the cooldown status from sender to the receiver
     await compareRewardsAtTransfer(
       stakedToken,
       sender,

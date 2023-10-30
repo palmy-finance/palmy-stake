@@ -4,7 +4,7 @@ import { deployStakedTokenV2Revision3 } from '../../helpers/contracts-accessors'
 import { getDefenderRelaySigner } from '../../helpers/defender-utils';
 import { DRE } from '../../helpers/misc-utils';
 
-task('deploy-staked-oal-rev3', 'Deploy implementation')
+task('deploy-staked-plmy-rev3', 'Deploy implementation')
   .addFlag('defender')
   .setAction(async ({ defender }, localBRE: any) => {
     await localBRE.run('set-dre');

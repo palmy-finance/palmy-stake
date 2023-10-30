@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config';
 import { eContractid } from '../../helpers/types';
 import { notFalsyOrZeroAddress, waitForTx } from '../../helpers/misc-utils';
-import { getStakedOasysLendProxy, getStakedTokenV2Rev3 } from '../../helpers/contracts-accessors';
+import { getStakedPalmyProxy, getStakedTokenV2Rev3 } from '../../helpers/contracts-accessors';
 
 const { StakedTokenV2Rev3 } = eContractid;
 
@@ -17,29 +17,24 @@ task(
 
   console.log(`\n- ${StakedTokenV2Rev3} initialization`);
 
-  const StakedOasysLendImpl = await getStakedTokenV2Rev3();
-  const StakedOasysLendProxy = await getStakedOasysLendProxy();
+  const StakedPalmyImpl = await getStakedTokenV2Rev3();
+  const StakedPalmyProxy = await getStakedPalmyProxy();
 
-  if (!notFalsyOrZeroAddress(StakedOasysLendImpl.address)) {
-    throw new Error('missing StakedOasysLendImpl');
+  if (!notFalsyOrZeroAddress(StakedPalmyImpl.address)) {
+    throw new Error('missing StakedPalmyImpl');
   }
-  if (!notFalsyOrZeroAddress(StakedOasysLendProxy.address)) {
-    throw new Error('missing StakedOasysLendProxy');
+  if (!notFalsyOrZeroAddress(StakedPalmyProxy.address)) {
+    throw new Error('missing StakedPalmyProxy');
   }
 
   console.log('\tInitializing StakedTokenV2Rev3');
 
-  console.log(`\tStakedTokenV2Rev3 Implementation address: ${StakedOasysLendImpl.address}`);
+  console.log(`\tStakedTokenV2Rev3 Implementation address: ${StakedPalmyImpl.address}`);
 
-  const encodedInitializeStakedOasysLend = StakedOasysLendImpl.interface.encodeFunctionData(
-    'initialize'
-  );
+  const encodedInitializeStakedPalmy = StakedPalmyImpl.interface.encodeFunctionData('initialize');
   console.log('upgrade');
   await waitForTx(
-    await StakedOasysLendProxy.upgradeToAndCall(
-      StakedOasysLendImpl.address,
-      encodedInitializeStakedOasysLend
-    )
+    await StakedPalmyProxy.upgradeToAndCall(StakedPalmyImpl.address, encodedInitializeStakedPalmy)
   );
 
   console.log('\tFinished StakedTokenV2Rev3 and Transparent Proxy initialization');

@@ -8,7 +8,7 @@ import {SafeMath} from '../lib/SafeMath.sol';
 import {IERC20} from '../interfaces/IERC20.sol';
 import {IAToken} from '../interfaces/IAToken.sol';
 import {IIncentivesController} from '../interfaces/IIncentivesController.sol';
-import {IStakedOasysLend} from '../interfaces/IStakedOasysLend.sol';
+import {IStakedPalmy} from '../interfaces/IStakedPalmy.sol';
 import {VersionedInitializable} from '../utils/VersionedInitializable.sol';
 import {DistributionManager} from './DistributionManager.sol';
 
@@ -25,7 +25,7 @@ contract IncentivesController is
   using SafeMath for uint256;
   uint256 public constant REVISION = 1;
 
-  IStakedOasysLend public immutable PSM;
+  IStakedPalmy public immutable PSM;
 
   IERC20 public immutable REWARD_TOKEN;
   address public immutable REWARDS_VAULT;
@@ -49,7 +49,7 @@ contract IncentivesController is
     require(psm != address(0), 'Cannot set the psm to the zero address');
     REWARD_TOKEN = IERC20(rewardToken);
     REWARDS_VAULT = rewardsVault;
-    PSM = IStakedOasysLend(psm);
+    PSM = IStakedPalmy(psm);
     EXTRA_PSM_REWARD = extraPsmReward;
   }
 

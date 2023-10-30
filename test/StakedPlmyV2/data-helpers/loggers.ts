@@ -1,6 +1,6 @@
 import { tEthereumAddress } from '../../../helpers/types';
 import { MintableErc20 } from '../../../types/MintableErc20';
-import { StakedOasysLend } from '../../../types/StakedOasysLend';
+import { StakedPalmy } from '../../../types/StakedPalmy';
 
 export const logLayTokenBalanceOf = async (account: tEthereumAddress, token: MintableErc20) => {
   console.log(`[token.balanceOf(${account})]: ${(await token.balanceOf(account)).toString()}`);
@@ -8,22 +8,20 @@ export const logLayTokenBalanceOf = async (account: tEthereumAddress, token: Min
 
 export const logStakedTokenBalanceOf = async (
   staker: tEthereumAddress,
-  StakedOasysLendV2: StakedOasysLend
+  StakedPalmyV2: StakedPalmy
 ) => {
   console.log(
-    `[StakedOasysLendV2.balanceOf(${staker})]: ${(
-      await StakedOasysLendV2.balanceOf(staker)
-    ).toString()}`
+    `[StakedPalmyV2.balanceOf(${staker})]: ${(await StakedPalmyV2.balanceOf(staker)).toString()}`
   );
 };
 
 export const logGetStakeTotalRewardsBalance = async (
   staker: tEthereumAddress,
-  StakedOasysLendV2: StakedOasysLend
+  StakedPalmyV2: StakedPalmy
 ) => {
   console.log(
-    `[StakedOasysLendV2.getTotalRewardsBalance(${staker})]: ${(
-      await StakedOasysLendV2.getTotalRewardsBalance(staker)
+    `[StakedPalmyV2.getTotalRewardsBalance(${staker})]: ${(
+      await StakedPalmyV2.getTotalRewardsBalance(staker)
     ).toString()}`
   );
 };

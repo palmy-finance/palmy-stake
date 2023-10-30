@@ -707,7 +707,7 @@ contract ERC20 is Context, IERC20 {
   function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {}
 }
 
-interface IStakedOasysLend {
+interface IStakedPalmy {
   function stake(address to, uint256 amount) external;
 
   function redeem(address to, uint256 amount) external;
@@ -887,7 +887,7 @@ contract DistributionManager is IDistributionManager {
 
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
-   * @param underlyingAsset The address used as key in the distribution, for example sOAL or the aTokens addresses on OasysLend
+   * @param underlyingAsset The address used as key in the distribution, for example sOAL or the aTokens addresses on Palmy
    * @param assetConfig Storage pointer to the distribution's config
    * @param totalStaked Current total of staked assets for this distribution
    * @return The new distribution index
@@ -1399,7 +1399,7 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
  * @author Palmy finance
  **/
 contract StakedTokenV2Rev4 is
-  IStakedOasysLend,
+  IStakedPalmy,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
   DistributionManager

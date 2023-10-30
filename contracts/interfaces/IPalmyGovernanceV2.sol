@@ -3,7 +3,7 @@ pragma solidity 0.7.5;
 pragma abicoder v2;
 
 // simplified interface to expose functions added events for tests
-interface IOasysLendGovernanceV2 {
+interface IPalmyGovernanceV2 {
   struct Vote {
     bool support;
     uint248 votingPower;
@@ -19,7 +19,16 @@ interface IOasysLendGovernanceV2 {
     address variableDebtToken,
     address interestRateStrategyAddress
   );
-  enum ProposalState {Pending, Canceled, Active, Failed, Succeeded, Queued, Expired, Executed}
+  enum ProposalState {
+    Pending,
+    Canceled,
+    Active,
+    Failed,
+    Succeeded,
+    Queued,
+    Expired,
+    Executed
+  }
 
   /**
    * @dev Creates a Proposal (needs Proposition Power of creator > Threshold)

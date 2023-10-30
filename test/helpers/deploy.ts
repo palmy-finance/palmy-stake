@@ -12,9 +12,9 @@ import {
 import {
   deployInitializableAdminUpgradeabilityProxy,
   deployIncentivesController,
-  deployStakedOasysLend,
+  deployStakedPalmy,
   deployMockTransferHook,
-  deployStakedOasysLendV2,
+  deployStakedPalmyV2,
   deployStakedTokenV2Revision3,
   deployStakedTokenV2Revision4,
 } from '../../helpers/contracts-accessors';
@@ -38,18 +38,18 @@ export const testDeployStakedRayV1 = async (
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
   const incentivesControllerProxy = await deployInitializableAdminUpgradeabilityProxy();
-  const StakedOasysLendProxy = await deployInitializableAdminUpgradeabilityProxy();
+  const StakedPalmyProxy = await deployInitializableAdminUpgradeabilityProxy();
 
   const incentivesControllerImplementation = await deployIncentivesController([
     token.address,
     vaultOfRewardsAddress,
-    StakedOasysLendProxy.address,
+    StakedPalmyProxy.address,
     PSM_STAKER_PREMIUM,
     emissionManager,
     (1000 * 60 * 60).toString(),
   ]);
 
-  const StakedOasysLendImpl = await deployStakedOasysLend([
+  const StakedPalmyImpl = await deployStakedPalmy([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -61,23 +61,24 @@ export const testDeployStakedRayV1 = async (
 
   const mockTransferHook = await deployMockTransferHook();
 
-  const StakedOasysLendEncodedInitialize = StakedOasysLendImpl.interface.encodeFunctionData(
-    'initialize',
-    [mockTransferHook.address, STAKED_TOKEN_NAME, STAKED_TOKEN_SYMBOL, STAKED_TOKEN_DECIMALS]
-  );
-  await StakedOasysLendProxy['initialize(address,address,bytes)'](
-    StakedOasysLendImpl.address,
+  const StakedPalmyEncodedInitialize = StakedPalmyImpl.interface.encodeFunctionData('initialize', [
+    mockTransferHook.address,
+    STAKED_TOKEN_NAME,
+    STAKED_TOKEN_SYMBOL,
+    STAKED_TOKEN_DECIMALS,
+  ]);
+  await StakedPalmyProxy['initialize(address,address,bytes)'](
+    StakedPalmyImpl.address,
     proxyAdmin,
-    StakedOasysLendEncodedInitialize
+    StakedPalmyEncodedInitialize
   );
   await waitForTx(
-    await token.connect(vaultOfRewards).approve(StakedOasysLendProxy.address, MAX_UINT_AMOUNT)
+    await token.connect(vaultOfRewards).approve(StakedPalmyProxy.address, MAX_UINT_AMOUNT)
   );
-  await insertContractAddressInDb(eContractid.StakedOasysLend, StakedOasysLendProxy.address);
+  await insertContractAddressInDb(eContractid.StakedPalmy, StakedPalmyProxy.address);
 
-  const peiEncodedInitialize = incentivesControllerImplementation.interface.encodeFunctionData(
-    'initialize'
-  );
+  const peiEncodedInitialize =
+    incentivesControllerImplementation.interface.encodeFunctionData('initialize');
   await incentivesControllerProxy['initialize(address,address,bytes)'](
     incentivesControllerImplementation.address,
     proxyAdmin,
@@ -93,7 +94,7 @@ export const testDeployStakedRayV1 = async (
 
   return {
     incentivesControllerProxy,
-    StakedOasysLendProxy,
+    StakedPalmyProxy,
   };
 };
 
@@ -108,14 +109,14 @@ export const testDeployStakedRayV2 = async (
   const emissionManager = await deployer.getAddress();
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const { StakedOasysLendProxy } = await testDeployStakedRayV1(
+  const { StakedPalmyProxy } = await testDeployStakedRayV1(
     token,
     deployer,
     vaultOfRewards,
     restWallets
   );
 
-  const StakedOasysLendImpl = await deployStakedTokenV2Revision4([
+  const StakedPalmyImpl = await deployStakedTokenV2Revision4([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -129,18 +130,16 @@ export const testDeployStakedRayV2 = async (
     ZERO_ADDRESS,
   ]);
 
-  const StakedOasysLendEncodedInitialize = StakedOasysLendImpl.interface.encodeFunctionData(
-    'initialize'
+  const StakedPalmyEncodedInitialize = StakedPalmyImpl.interface.encodeFunctionData('initialize');
+
+  await StakedPalmyProxy.connect(restWallets[0]).upgradeToAndCall(
+    StakedPalmyImpl.address,
+    StakedPalmyEncodedInitialize
   );
 
-  await StakedOasysLendProxy.connect(restWallets[0]).upgradeToAndCall(
-    StakedOasysLendImpl.address,
-    StakedOasysLendEncodedInitialize
-  );
-
-  await insertContractAddressInDb(eContractid.StakedOasysLendV2, StakedOasysLendProxy.address);
+  await insertContractAddressInDb(eContractid.StakedPalmyV2, StakedPalmyProxy.address);
 
   return {
-    StakedOasysLendProxy,
+    StakedPalmyProxy,
   };
 };

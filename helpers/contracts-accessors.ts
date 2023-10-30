@@ -2,11 +2,11 @@ import { StakedTokenV2Rev4 } from './../types/StakedTokenV2Rev4.d';
 import { deployContract, getContractFactory, getContract } from './contracts-helpers';
 import { eContractid, tEthereumAddress } from './types';
 import { MintableErc20 } from '../types/MintableErc20';
-import { StakedOasysLend } from '../types/StakedOasysLend';
-import { StakedOasysLendV2 } from '../types/StakedOasysLendV2';
+import { StakedPalmy } from '../types/StakedPalmy';
+import { StakedPalmyV2 } from '../types/StakedPalmyV2';
 import { IcrpFactory } from '../types/IcrpFactory'; // Configurable right pool factory
 import { IConfigurableRightsPool } from '../types/IConfigurableRightsPool';
-import { IControllerOasysLendEcosystemReserve } from '../types/IControllerOasysLendEcosystemReserve';
+import { IControllerPalmyEcosystemReserve } from '../types/IControllerPalmyEcosystemReserve';
 import { SelfdestructTransfer } from '../types/SelfdestructTransfer';
 import { IbPool } from '../types/IbPool'; // Balance pool
 import { StakedTokenV2 } from '../types/StakedTokenV2';
@@ -23,7 +23,7 @@ import { ZERO_ADDRESS } from './constants';
 import { Signer } from 'ethers';
 import { StakedTokenBptRev2, StakedTokenV2Rev3 } from '../types';
 
-export const deployStakedOasysLend = async (
+export const deployStakedPalmy = async (
   [
     stakedToken,
     rewardsToken,
@@ -43,7 +43,7 @@ export const deployStakedOasysLend = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedOasysLend;
+  const id = eContractid.StakedPalmy;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -53,14 +53,14 @@ export const deployStakedOasysLend = async (
     emissionManager,
     distributionDuration,
   ];
-  const instance = await deployContract<StakedOasysLend>(id, args);
+  const instance = await deployContract<StakedPalmy>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
   return instance;
 };
 
-export const deployStakedOasysLendV2 = async (
+export const deployStakedPalmyV2 = async (
   [
     stakedToken,
     rewardsToken,
@@ -80,7 +80,7 @@ export const deployStakedOasysLendV2 = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedOasysLendV2;
+  const id = eContractid.StakedPalmyV2;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -91,7 +91,7 @@ export const deployStakedOasysLendV2 = async (
     distributionDuration,
     ZERO_ADDRESS, // gov address
   ];
-  const instance = await deployContract<StakedOasysLendV2>(id, args);
+  const instance = await deployContract<StakedPalmyV2>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
@@ -417,24 +417,23 @@ export const deployDoubleTransferHelper = async (token: tEthereumAddress, verify
 
 export const getMintableErc20 = getContractFactory<MintableErc20>(eContractid.MintableErc20);
 
-export const getStakedOasysLend = getContractFactory<StakedOasysLend>(eContractid.StakedOasysLend);
-export const getStakedOasysLendV2 = getContractFactory<StakedOasysLendV2>(
-  eContractid.StakedOasysLendV2
-);
+export const getStakedPalmy = getContractFactory<StakedPalmy>(eContractid.StakedPalmy);
+export const getStakedPalmyV2 = getContractFactory<StakedPalmyV2>(eContractid.StakedPalmyV2);
 
-export const getStakedOasysLendProxy = async (address?: tEthereumAddress) => {
+export const getStakedPalmyProxy = async (address?: tEthereumAddress) => {
   return await getContract<InitializableAdminUpgradeabilityProxy>(
     eContractid.InitializableAdminUpgradeabilityProxy,
-    address ||
-      (await getDb().get(`${eContractid.StakedOasysLend}.${DRE.network.name}`).value()).address
+    address || (await getDb().get(`${eContractid.StakedPalmy}.${DRE.network.name}`).value()).address
   );
 };
 
-export const getStakedOasysLendImpl = async (address?: tEthereumAddress) => {
-  return await getContract<StakedOasysLend>(
-    eContractid.StakedOasysLend,
+export const getStakedPalmyImpl = async (address?: tEthereumAddress) => {
+  return await getContract<StakedPalmy>(
+    eContractid.StakedPalmy,
     address ||
-      (await getDb().get(`${eContractid.StakedOasysLendImpl}.${DRE.network.name}`).value()).address
+      (
+        await getDb().get(`${eContractid.StakedPalmyImpl}.${DRE.network.name}`).value()
+      ).address
   );
 };
 
@@ -442,14 +441,18 @@ export const getStakedTokenV2 = async (address?: tEthereumAddress) => {
   return await getContract<StakedTokenV2>(
     eContractid.StakedTokenV2,
     address ||
-      (await getDb().get(`${eContractid.StakedTokenV2}.${DRE.network.name}`).value()).address
+      (
+        await getDb().get(`${eContractid.StakedTokenV2}.${DRE.network.name}`).value()
+      ).address
   );
 };
 export const getStakedTokenV3 = async (address?: tEthereumAddress) => {
   return await getContract<StakedTokenV3>(
     eContractid.StakedTokenV2,
     address ||
-      (await getDb().get(`${eContractid.StakedTokenV2}.${DRE.network.name}`).value()).address
+      (
+        await getDb().get(`${eContractid.StakedTokenV2}.${DRE.network.name}`).value()
+      ).address
   );
 };
 
@@ -457,7 +460,9 @@ export const getStakedTokenV2Rev3 = async (address?: tEthereumAddress) => {
   return await getContract<StakedTokenV2Rev3>(
     eContractid.StakedTokenV2Rev3,
     address ||
-      (await getDb().get(`${eContractid.StakedTokenV2Rev3}.${DRE.network.name}`).value()).address
+      (
+        await getDb().get(`${eContractid.StakedTokenV2Rev3}.${DRE.network.name}`).value()
+      ).address
   );
 };
 
@@ -465,7 +470,9 @@ export const getStakedTokenV2Rev4 = async (address?: tEthereumAddress) => {
   return await getContract<StakedTokenV2Rev3>(
     eContractid.StakedTokenV2Rev4,
     address ||
-      (await getDb().get(`${eContractid.StakedTokenV2Rev4}.${DRE.network.name}`).value()).address
+      (
+        await getDb().get(`${eContractid.StakedTokenV2Rev4}.${DRE.network.name}`).value()
+      ).address
   );
 };
 
@@ -490,8 +497,8 @@ export const getERC20Contract = (address: tEthereumAddress) =>
   getContract<MintableErc20>(eContractid.MintableErc20, address);
 
 export const getController = (address: tEthereumAddress) =>
-  getContract<IControllerOasysLendEcosystemReserve>(
-    eContractid.IControllerOasysLendEcosystemReserve,
+  getContract<IControllerPalmyEcosystemReserve>(
+    eContractid.IControllerPalmyEcosystemReserve,
     address
   );
 
