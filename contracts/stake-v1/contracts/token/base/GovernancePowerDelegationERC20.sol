@@ -3,13 +3,11 @@ pragma solidity 0.7.5;
 
 import {SafeMath} from '../../open-zeppelin/SafeMath.sol';
 import {ERC20} from '../../open-zeppelin/ERC20.sol';
-import {
-  IGovernancePowerDelegationToken
-} from '../../interfaces/IGovernancePowerDelegationToken.sol';
+import {IGovernancePowerDelegationToken} from '../../interfaces/IGovernancePowerDelegationToken.sol';
 
 /**
  * @notice implementation of the token contract
- * @author HorizonX.tech
+ * @author Palmy finance
  */
 abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDelegationToken {
   using SafeMath for uint256;
@@ -48,12 +46,10 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * @dev returns the delegatee of an user
    * @param delegator the address of the delegator
    **/
-  function getDelegateeByType(address delegator, DelegationType delegationType)
-    external
-    view
-    override
-    returns (address)
-  {
+  function getDelegateeByType(
+    address delegator,
+    DelegationType delegationType
+  ) external view override returns (address) {
     (, , mapping(address => address) storage delegates) = _getDelegationDataByType(delegationType);
 
     return _getDelegatee(delegator, delegates);
@@ -64,12 +60,10 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * power delegated at the time of the last snapshot
    * @param user the user
    **/
-  function getPowerCurrent(address user, DelegationType delegationType)
-    external
-    view
-    override
-    returns (uint256)
-  {
+  function getPowerCurrent(
+    address user,
+    DelegationType delegationType
+  ) external view override returns (uint256) {
     (
       mapping(address => mapping(uint256 => Snapshot)) storage snapshots,
       mapping(address => uint256) storage snapshotsCounts,
@@ -249,7 +243,9 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * who inherit from this to provide access to the delegation data by overriding this method.
    * @param delegationType the type of delegation
    **/
-  function _getDelegationDataByType(DelegationType delegationType)
+  function _getDelegationDataByType(
+    DelegationType delegationType
+  )
     internal
     view
     virtual
@@ -295,11 +291,10 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
    * @param delegator the address of the user for which return the delegatee
    * @param delegates the array of delegates for a particular type of delegation
    **/
-  function _getDelegatee(address delegator, mapping(address => address) storage delegates)
-    internal
-    view
-    returns (address)
-  {
+  function _getDelegatee(
+    address delegator,
+    mapping(address => address) storage delegates
+  ) internal view returns (address) {
     address previousDelegatee = delegates[delegator];
 
     if (previousDelegatee == address(0)) {

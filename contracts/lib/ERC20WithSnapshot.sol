@@ -8,7 +8,7 @@ import {SafeMath} from '../lib/SafeMath.sol';
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author HorizonX.tech
+ * @author Palmy finance
  **/
 contract ERC20WithSnapshot is ERC20 {
   using SafeMath for uint256;
@@ -44,11 +44,7 @@ contract ERC20WithSnapshot is ERC20 {
    * @param oldValue The value before the operation that is gonna be executed after the snapshot
    * @param newValue The value after the operation
    */
-  function _writeSnapshot(
-    address owner,
-    uint128 oldValue,
-    uint128 newValue
-  ) internal virtual {
+  function _writeSnapshot(address owner, uint128 oldValue, uint128 newValue) internal virtual {
     uint128 currentBlock = uint128(block.number);
 
     uint256 ownerCountOfSnapshots = _countsSnapshots[owner];

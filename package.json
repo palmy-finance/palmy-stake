@@ -1,5 +1,5 @@
 {
-  "name": "oasyslend-stake",
+  "name": "palmy-stake",
   "version": "1.0.2",
   "description": "contracts related with staking",
   "files": [
@@ -101,7 +101,7 @@
   "license": "AGPL-3.0",
   "dependencies": {},
   "keywords": [
-    "oasyslend",
+    "palmy",
     "stake",
     "token",
     "safety",

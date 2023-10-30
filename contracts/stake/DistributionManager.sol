@@ -9,7 +9,7 @@ import {IDistributionManager} from '../interfaces/IDistributionManager.sol';
 /**
  * @title DistributionManager
  * @notice Accounting contract to manage multiple staking distributions
- * @author HorizonX.tech
+ * @author Palmy finance
  **/
 contract DistributionManager is IDistributionManager {
   using SafeMath for uint256;
@@ -43,10 +43,9 @@ contract DistributionManager is IDistributionManager {
    * @dev Configures the distribution of rewards for a list of assets
    * @param assetsConfigInput The list of configurations to apply
    **/
-  function configureAssets(DistributionTypes.AssetConfigInput[] calldata assetsConfigInput)
-    external
-    override
-  {
+  function configureAssets(
+    DistributionTypes.AssetConfigInput[] calldata assetsConfigInput
+  ) external override {
     require(msg.sender == EMISSION_MANAGER, 'ONLY_EMISSION_MANAGER'); // only location of use EMISSION_MANAGER
 
     for (uint256 i = 0; i < assetsConfigInput.length; i++) {
@@ -86,8 +85,12 @@ contract DistributionManager is IDistributionManager {
       return oldIndex;
     }
 
-    uint256 newIndex =
-      _getAssetIndex(oldIndex, assetConfig.emissionPerSecond, lastUpdateTimestamp, totalStaked);
+    uint256 newIndex = _getAssetIndex(
+      oldIndex,
+      assetConfig.emissionPerSecond,
+      lastUpdateTimestamp,
+      totalStaked
+    );
 
     if (newIndex != oldIndex) {
       assetConfig.index = newIndex;
@@ -137,10 +140,10 @@ contract DistributionManager is IDistributionManager {
    * @param stakes List of structs of the user data related with his stake
    * @return The accrued rewards for the user until the moment
    **/
-  function _claimRewards(address user, DistributionTypes.UserStakeInput[] memory stakes)
-    internal
-    returns (uint256)
-  {
+  function _claimRewards(
+    address user,
+    DistributionTypes.UserStakeInput[] memory stakes
+  ) internal returns (uint256) {
     uint256 accruedRewards = 0;
 
     for (uint256 i = 0; i < stakes.length; i++) {
@@ -163,22 +166,20 @@ contract DistributionManager is IDistributionManager {
    * @param stakes List of structs of the user data related with his stake
    * @return The accrued rewards for the user until the moment
    **/
-  function _getUnclaimedRewards(address user, DistributionTypes.UserStakeInput[] memory stakes)
-    internal
-    view
-    returns (uint256)
-  {
+  function _getUnclaimedRewards(
+    address user,
+    DistributionTypes.UserStakeInput[] memory stakes
+  ) internal view returns (uint256) {
     uint256 accruedRewards = 0;
 
     for (uint256 i = 0; i < stakes.length; i++) {
       AssetData storage assetConfig = assets[stakes[i].underlyingAsset];
-      uint256 assetIndex =
-        _getAssetIndex(
-          assetConfig.index,
-          assetConfig.emissionPerSecond,
-          assetConfig.lastUpdateTimestamp,
-          stakes[i].totalStaked
-        );
+      uint256 assetIndex = _getAssetIndex(
+        assetConfig.index,
+        assetConfig.emissionPerSecond,
+        assetConfig.lastUpdateTimestamp,
+        stakes[i].totalStaked
+      );
 
       accruedRewards = accruedRewards.add(
         _getRewards(stakes[i].stakedByUser, assetIndex, assetConfig.users[user])
@@ -199,7 +200,7 @@ contract DistributionManager is IDistributionManager {
     uint256 reserveIndex,
     uint256 userIndex
   ) internal pure returns (uint256) {
-    return principalUserBalance.mul(reserveIndex.sub(userIndex)).div(10**uint256(PRECISION));
+    return principalUserBalance.mul(reserveIndex.sub(userIndex)).div(10 ** uint256(PRECISION));
   }
 
   /**
@@ -225,11 +226,12 @@ contract DistributionManager is IDistributionManager {
       return currentIndex;
     }
 
-    uint256 currentTimestamp =
-      block.timestamp > DISTRIBUTION_END ? DISTRIBUTION_END : block.timestamp;
+    uint256 currentTimestamp = block.timestamp > DISTRIBUTION_END
+      ? DISTRIBUTION_END
+      : block.timestamp;
     uint256 timeDelta = currentTimestamp.sub(lastUpdateTimestamp);
     return
-      emissionPerSecond.mul(timeDelta).mul(10**uint256(PRECISION)).div(totalBalance).add(
+      emissionPerSecond.mul(timeDelta).mul(10 ** uint256(PRECISION)).div(totalBalance).add(
         currentIndex
       );
   }

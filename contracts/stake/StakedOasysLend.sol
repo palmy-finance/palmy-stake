@@ -8,7 +8,7 @@ import {StakedToken} from './StakedToken.sol';
 /**
  * @title StakedOasysLend
  * @notice StakedToken with OAL token as staked token
- * @author HorizonX.tech
+ * @author Palmy finance
  **/
 contract StakedOasysLend is StakedToken {
   string internal constant NAME = 'Staked OasysLend';

@@ -15,7 +15,7 @@ import {DistributionManager} from './DistributionManager.sol';
 /**
  * @title IncentivesController
  * @notice Distributor contract for rewards to the protocol
- * @author HorizonX.tech
+ * @author Palmy finance
  **/
 contract IncentivesController is
   IIncentivesController,
@@ -67,11 +67,7 @@ contract IncentivesController is
    * @param userBalance The balance of the user of the asset in the lending pool
    * @param totalSupply The total supply of the asset in the lending pool
    **/
-  function handleAction(
-    address user,
-    uint256 userBalance,
-    uint256 totalSupply
-  ) external override {
+  function handleAction(address user, uint256 userBalance, uint256 totalSupply) external override {
     uint256 accruedRewards = _updateUserAssetInternal(user, msg.sender, userBalance, totalSupply);
     if (accruedRewards != 0) {
       _usersUnclaimedRewards[user] = _usersUnclaimedRewards[user].add(accruedRewards);
@@ -84,16 +80,15 @@ contract IncentivesController is
    * @param user The address of the user
    * @return The rewards
    **/
-  function getRewardsBalance(address[] calldata assets, address user)
-    external
-    view
-    override
-    returns (uint256)
-  {
+  function getRewardsBalance(
+    address[] calldata assets,
+    address user
+  ) external view override returns (uint256) {
     uint256 unclaimedRewards = _usersUnclaimedRewards[user];
 
-    DistributionTypes.UserStakeInput[] memory userState =
-      new DistributionTypes.UserStakeInput[](assets.length);
+    DistributionTypes.UserStakeInput[] memory userState = new DistributionTypes.UserStakeInput[](
+      assets.length
+    );
     for (uint256 i = 0; i < assets.length; i++) {
       userState[i].underlyingAsset = assets[i];
       (userState[i].stakedByUser, userState[i].totalStaked) = IAToken(assets[i])
@@ -122,8 +117,9 @@ contract IncentivesController is
     address user = msg.sender;
     uint256 unclaimedRewards = _usersUnclaimedRewards[user];
 
-    DistributionTypes.UserStakeInput[] memory userState =
-      new DistributionTypes.UserStakeInput[](assets.length);
+    DistributionTypes.UserStakeInput[] memory userState = new DistributionTypes.UserStakeInput[](
+      assets.length
+    );
     for (uint256 i = 0; i < assets.length; i++) {
       userState[i].underlyingAsset = assets[i];
       (userState[i].stakedByUser, userState[i].totalStaked) = IAToken(assets[i])

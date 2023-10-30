@@ -1,6 +1,6 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
-[![Build pass](https://github.com/horizonx-tech/oasyslend-stake/actions/workflows/node.js.yml/badge.svg)](https://github.com/horizonx-tech/oasyslend-stake/actions/workflows/node.js.yml)
-[![codecov](https://codecov.io/gh/horizonx-tech/oasyslend-stake/branch/master/graph/badge.svg?token=0rtEtFEtgN)](https://codecov.io/gh/horizonx-tech/oasyslend-stake/)
+[![Build pass](https://github.com/palmy-finance/palmy-stake/actions/workflows/node.js.yml/badge.svg)](https://github.com/palmy-finance/palmy-stake/actions/workflows/node.js.yml)
+[![codecov](https://codecov.io/gh/palmy-finance/palmy-stake/branch/master/graph/badge.svg?token=0rtEtFEtgN)](https://codecov.io/gh/palmy-finance/palmy-stake/)
 
 ## About Development
 

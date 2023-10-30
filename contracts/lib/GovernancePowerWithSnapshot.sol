@@ -4,14 +4,12 @@ pragma solidity 0.7.5;
 import {ERC20} from '../lib/ERC20.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 import {SafeMath} from '../lib/SafeMath.sol';
-import {
-  GovernancePowerDelegationERC20
-} from '../stake-v1/contracts/token/base/GovernancePowerDelegationERC20.sol';
+import {GovernancePowerDelegationERC20} from '../stake-v1/contracts/token/base/GovernancePowerDelegationERC20.sol';
 
 /**
  * @title ERC20WithSnapshot
  * @notice ERC20 including snapshots of balances on transfer-related actions
- * @author HorizonX.tech
+ * @author Palmy finance
  **/
 abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 {
   using SafeMath for uint256;
