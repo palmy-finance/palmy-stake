@@ -1,3 +1,0 @@
-[submodule "submodule-protocol"]
-	path = submodule-protocol
-	url = git@github.com:horizonx-tech/oasyslend-protocol
