@@ -20,28 +20,28 @@ const { expect } = require('chai');
 
 makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('Initial configuration after initialize() is correct', async () => {
-    const { stakedToken, woasToken: plmyToken, rewardsVault } = testEnv;
+    const { stakedToken, woasToken, rewardsVault } = testEnv;
 
     expect(await stakedToken.name()).to.be.equal(STAKED_TOKEN_NAME);
     expect(await stakedToken.symbol()).to.be.equal(STAKED_TOKEN_SYMBOL);
     expect(await stakedToken.decimals()).to.be.equal(STAKED_TOKEN_DECIMALS);
     expect(await stakedToken.REVISION()).to.be.equal(1);
-    expect(await stakedToken.STAKED_TOKEN()).to.be.equal(plmyToken.address);
-    expect(await stakedToken.REWARD_TOKEN()).to.be.equal(plmyToken.address);
+    expect(await stakedToken.STAKED_TOKEN()).to.be.equal(woasToken.address);
+    expect(await stakedToken.REWARD_TOKEN()).to.be.equal(woasToken.address);
     expect((await stakedToken.COOLDOWN_SECONDS()).toString()).to.be.equal(COOLDOWN_SECONDS);
     expect((await stakedToken.UNSTAKE_WINDOW()).toString()).to.be.equal(UNSTAKE_WINDOW);
     expect(await stakedToken.REWARDS_VAULT()).to.be.equal(rewardsVault.address);
   });
   it('Reverts trying to constract with zero_address', async () => {
-    const { stakedToken, woasToken: plmyToken, rewardsVault } = testEnv;
+    const { stakedToken, woasToken, rewardsVault } = testEnv;
     await expect(
       deployStakedOas([
         ZERO_ADDRESS,
-        plmyToken.address,
+        woasToken.address,
         '100',
         '100',
         rewardsVault.address,
-        plmyToken.address,
+        woasToken.address,
         '100',
       ])
     ).to.be.revertedWith('Cannot set the stakedToken to the zero address');
@@ -52,7 +52,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
         '100',
         '100',
         rewardsVault.address,
-        plmyToken.address,
+        woasToken.address,
         '100',
       ])
     ).to.be.revertedWith('Cannot set the rewardToken to the zero address');
@@ -63,7 +63,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
         '100',
         '100',
         ZERO_ADDRESS,
-        plmyToken.address,
+        woasToken.address,
         '100',
       ])
     ).to.be.revertedWith('Cannot set the rewardsVault to the zero address');
@@ -73,7 +73,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
         stakedToken.address,
         '100',
         '100',
-        plmyToken.address,
+        woasToken.address,
         ZERO_ADDRESS,
         '100',
       ])
@@ -106,7 +106,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 stakes 50 Token: receives 50 sToken, StakedToken balance of Token is 50 and his rewards to claim are 0', async () => {
     const {
       stakedToken,
-      woasToken: plmyToken,
+      woasToken,
       users: [, staker],
     } = testEnv;
     const amount = ethers.utils.parseEther('50');
@@ -117,7 +117,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
 
     // Prepare actions for the test case
     const actions = () => [
-      plmyToken.connect(staker.signer).approve(stakedToken.address, amount),
+      woasToken.connect(staker.signer).approve(stakedToken.address, amount),
       stakedToken.connect(staker.signer).stake(staker.address, amount),
     ];
 
@@ -128,17 +128,17 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
     expect((await stakedToken.balanceOf(staker.address)).toString()).to.be.equal(
       saveBalanceBefore.plus(amount.toString()).toString()
     );
-    expect((await plmyToken.balanceOf(stakedToken.address)).toString()).to.be.equal(
+    expect((await woasToken.balanceOf(stakedToken.address)).toString()).to.be.equal(
       saveBalanceBefore.plus(amount.toString()).toString()
     );
     expect((await stakedToken.balanceOf(staker.address)).toString()).to.be.equal(amount);
-    expect((await plmyToken.balanceOf(stakedToken.address)).toString()).to.be.equal(amount);
+    expect((await woasToken.balanceOf(stakedToken.address)).toString()).to.be.equal(amount);
   });
 
   it('User 1 stakes 20 Token more: his total sToken balance increases, StakedToken balance of Token increases and his reward until now get accumulated', async () => {
     const {
       stakedToken,
-      woasToken: plmyToken,
+      woasToken,
       users: [, staker],
     } = testEnv;
     const amount = ethers.utils.parseEther('20');
@@ -147,7 +147,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
       (await stakedToken.balanceOf(staker.address)).toString()
     );
     const actions = () => [
-      plmyToken.connect(staker.signer).approve(stakedToken.address, amount),
+      woasToken.connect(staker.signer).approve(stakedToken.address, amount),
       stakedToken.connect(staker.signer).stake(staker.address, amount),
     ];
 
@@ -158,7 +158,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
     expect((await stakedToken.balanceOf(staker.address)).toString()).to.be.equal(
       saveBalanceBefore.plus(amount.toString()).toString()
     );
-    expect((await plmyToken.balanceOf(stakedToken.address)).toString()).to.be.equal(
+    expect((await woasToken.balanceOf(stakedToken.address)).toString()).to.be.equal(
       saveBalanceBefore.plus(amount.toString()).toString()
     );
   });
@@ -166,29 +166,29 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 claim half rewards ', async () => {
     const {
       stakedToken,
-      woasToken: plmyToken,
+      woasToken,
       users: [, staker],
     } = testEnv;
     // Increase time for bigger rewards
     await increaseTimeAndMine(1000);
 
     const halfRewards = (await stakedToken.stakerRewardsToClaim(staker.address)).div(2);
-    const saveUserBalance = await plmyToken.balanceOf(staker.address);
+    const saveUserBalance = await woasToken.balanceOf(staker.address);
 
     await stakedToken.connect(staker.signer).claimRewards(staker.address, halfRewards);
 
-    const userBalanceAfterActions = await plmyToken.balanceOf(staker.address);
+    const userBalanceAfterActions = await woasToken.balanceOf(staker.address);
     expect(userBalanceAfterActions.eq(saveUserBalance.add(halfRewards))).to.be.ok;
   });
 
   it('User 1 tries to claim higher reward than current rewards balance', async () => {
     const {
       stakedToken,
-      woasToken: plmyToken,
+      woasToken,
       users: [, staker],
     } = testEnv;
 
-    const saveUserBalance = await plmyToken.balanceOf(staker.address);
+    const saveUserBalance = await woasToken.balanceOf(staker.address);
 
     // Try to claim more amount than accumulated
     await expect(
@@ -197,14 +197,14 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
         .claimRewards(staker.address, ethers.utils.parseEther('10000'))
     ).to.be.revertedWith('INVALID_AMOUNT');
 
-    const userBalanceAfterActions = await plmyToken.balanceOf(staker.address);
+    const userBalanceAfterActions = await woasToken.balanceOf(staker.address);
     expect(userBalanceAfterActions.eq(saveUserBalance)).to.be.ok;
   });
 
   it('User 1 claim all rewards', async () => {
     const {
       stakedToken,
-      woasToken: plmyToken,
+      woasToken,
       users: [, staker],
     } = testEnv;
 
@@ -212,7 +212,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
     const underlyingAsset = stakedToken.address;
 
     const userBalance = await stakedToken.balanceOf(userAddress);
-    const userTokenBalance = await plmyToken.balanceOf(userAddress);
+    const userTokenBalance = await woasToken.balanceOf(userAddress);
     const userRewards = await stakedToken.stakerRewardsToClaim(userAddress);
     // Get index before actions
     const userIndexBefore = await getUserIndex(stakedToken, userAddress, underlyingAsset);
@@ -228,7 +228,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
       userIndexAfter,
       userIndexBefore
     ).toString();
-    const userTokenBalanceAfterAction = (await plmyToken.balanceOf(userAddress)).toString();
+    const userTokenBalanceAfterAction = (await woasToken.balanceOf(userAddress)).toString();
 
     expect(userTokenBalanceAfterAction).to.be.equal(
       userTokenBalance.add(userRewards).add(expectedAccruedRewards).toString()
@@ -236,7 +236,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
 
   it('User 6 stakes 50 Token, with the rewards not enabled', async () => {
-    const { stakedToken, woasToken: plmyToken, users } = testEnv;
+    const { stakedToken, woasToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const sixStaker = users[5];
 
@@ -248,7 +248,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
 
     // Checks rewards
     const actions = () => [
-      plmyToken.connect(sixStaker.signer).approve(stakedToken.address, amount),
+      woasToken.connect(sixStaker.signer).approve(stakedToken.address, amount),
       stakedToken.connect(sixStaker.signer).stake(sixStaker.address, amount),
     ];
 
@@ -267,7 +267,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
 
   it('User 6 stakes 30 Token more, with the rewards not enabled', async () => {
-    const { stakedToken, woasToken: plmyToken, users } = testEnv;
+    const { stakedToken, woasToken, users } = testEnv;
     const amount = ethers.utils.parseEther('30');
     const staker = users[1];
     const sixStaker = users[5];
@@ -282,7 +282,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
 
     // Checks rewards
     const actions = () => [
-      plmyToken.connect(sixStaker.signer).approve(stakedToken.address, amount),
+      woasToken.connect(sixStaker.signer).approve(stakedToken.address, amount),
       stakedToken.connect(sixStaker.signer).stake(sixStaker.address, amount),
     ];
 
@@ -296,14 +296,14 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
 
   it('Validates staker cooldown with stake() while being on valid unstake window', async () => {
-    const { stakedToken, woasToken: plmyToken, users } = testEnv;
+    const { stakedToken, woasToken, users } = testEnv;
     const amount1 = ethers.utils.parseEther('50');
     const amount2 = ethers.utils.parseEther('20');
     const staker = users[4];
 
     // Checks rewards
     const actions = () => [
-      plmyToken.connect(staker.signer).approve(stakedToken.address, amount1.add(amount2)),
+      woasToken.connect(staker.signer).approve(stakedToken.address, amount1.add(amount2)),
       stakedToken.connect(staker.signer).stake(staker.address, amount1),
     ];
 

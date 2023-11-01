@@ -94,7 +94,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   });
 
   it('User 1 stakes 2 Token; checks voting and proposition power of user 2 and 3', async () => {
-    const { users, woasToken: plmyToken, stakedTokenV2 } = testEnv;
+    const { users, woasToken, stakedTokenV2 } = testEnv;
     const user1 = users[1];
     const user2 = users[2];
     const user3 = users[3];
@@ -104,7 +104,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
 
     // Stake
     await waitForTx(
-      await plmyToken.connect(user1.signer).approve(stakedTokenV2.address, tokenBalance)
+      await woasToken.connect(user1.signer).approve(stakedTokenV2.address, tokenBalance)
     );
     const tx = await waitForTx(
       await stakedTokenV2.connect(user1.signer).stake(user1.address, tokenBalance)
@@ -142,7 +142,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   });
 
   it('User 2 stakes 2 LEND; checks voting and proposition power of user 2', async () => {
-    const { users, woasToken: plmyToken, stakedTokenV2 } = testEnv;
+    const { users, woasToken, stakedTokenV2 } = testEnv;
     const user2 = users[2];
 
     const tokenBalance = parseEther('2');
@@ -150,7 +150,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
 
     // Stake
     await waitForTx(
-      await plmyToken.connect(user2.signer).approve(stakedTokenV2.address, tokenBalance)
+      await woasToken.connect(user2.signer).approve(stakedTokenV2.address, tokenBalance)
     );
     await waitForTx(await stakedTokenV2.connect(user2.signer).stake(user2.address, tokenBalance));
 
@@ -168,7 +168,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   });
 
   it('User 3 migrates 2 LEND; checks voting and proposition power of user 3', async () => {
-    const { users, woasToken: plmyToken, stakedTokenV2 } = testEnv;
+    const { users, woasToken, stakedTokenV2 } = testEnv;
     const user3 = users[3];
 
     const tokenBalance = parseEther('2');
@@ -176,7 +176,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
 
     // Stake
     await waitForTx(
-      await plmyToken.connect(user3.signer).approve(stakedTokenV2.address, tokenBalance)
+      await woasToken.connect(user3.signer).approve(stakedTokenV2.address, tokenBalance)
     );
     await waitForTx(await stakedTokenV2.connect(user3.signer).stake(user3.address, tokenBalance));
 

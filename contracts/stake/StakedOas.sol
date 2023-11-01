@@ -11,7 +11,7 @@ import {StakedToken} from './StakedToken.sol';
  * @author Palmy finance
  **/
 contract StakedOas is StakedToken {
-  string internal constant NAME = 'Staked Palmy';
+  string internal constant NAME = 'Staked OAS';
   string internal constant SYMBOL = 'sOAS';
   uint8 internal constant DECIMALS = 18;
 

@@ -74,7 +74,7 @@ describe('Proposal: Extend Staked OAS distribution', () => {
   let proposer: SignerWithAddress;
   let gov: IPalmyGovernanceV2;
   let pool: ILendingPool;
-  let plmyToken: Erc20;
+  let woasToken: Erc20;
   let plmyBpt: Erc20;
   let dai: Erc20;
   let aDAI: Erc20;
@@ -121,7 +121,7 @@ describe('Proposal: Extend Staked OAS distribution', () => {
 
     const { aTokenAddress } = await pool.getReserveData(DAI_TOKEN);
 
-    plmyToken = Erc20__factory.connect(WOAS_TOKEN, whale);
+    woasToken = Erc20__factory.connect(WOAS_TOKEN, whale);
     plmyBpt = Erc20__factory.connect(BPT_POOL_TOKEN, bptWhale);
     StakedOasV2 = StakedOasV2__factory.connect(STAKED_WOAS, proposer);
     bptStakeV2 = StakedOasV2__factory.connect(BPT_STAKE, proposer);
@@ -129,9 +129,9 @@ describe('Proposal: Extend Staked OAS distribution', () => {
     aDAI = Erc20__factory.connect(aTokenAddress, proposer);
 
     // Transfer enough WOAS to proposer
-    await (await plmyToken.transfer(proposer.address, parseEther('2000000'))).wait();
+    await (await woasToken.transfer(proposer.address, parseEther('2000000'))).wait();
     // Transfer enough WOAS to proposer
-    await (await plmyToken.connect(whale2).transfer(proposer.address, parseEther('1200000'))).wait();
+    await (await woasToken.connect(whale2).transfer(proposer.address, parseEther('1200000'))).wait();
     // Transfer DAI to repay future DAI loan
     await (await dai.transfer(proposer.address, parseEther('100000'))).wait();
     // Transfer WOAS BPT pool shares to proposer
@@ -143,7 +143,7 @@ describe('Proposal: Extend Staked OAS distribution', () => {
     const govToken = IDelegationAwareToken__factory.connect(WOAS_TOKEN, proposer);
 
     try {
-      const balance = await plmyToken.balanceOf(proposer.address);
+      const balance = await woasToken.balanceOf(proposer.address);
       console.log('Token Balance proposer', formatEther(balance));
       const propositionPower = await govToken.getPowerAtBlock(
         proposer.address,
@@ -224,7 +224,7 @@ describe('Proposal: Extend Staked OAS distribution', () => {
 
   it('Users should be able to stake WOAS', async () => {
     const amount = parseEther('10');
-    await waitForTx(await plmyToken.connect(proposer).approve(StakedOasV2.address, amount));
+    await waitForTx(await woasToken.connect(proposer).approve(StakedOasV2.address, amount));
     await expect(StakedOasV2.connect(proposer).stake(proposer.address, amount)).to.emit(
       StakedOasV2,
       'Staked'

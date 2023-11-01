@@ -8,18 +8,18 @@ import { MintableErc20 } from '../types/MintableErc20';
 import { testDeployStakedRayV2, testDeployStakedRayV1 } from './helpers/deploy';
 import { parseEther } from 'ethers/lib/utils';
 
-const topUpWalletsWithOas = async (wallets: Signer[], plmyToken: MintableErc20, amount: string) => {
+const topUpWalletsWithOas = async (wallets: Signer[], woasToken: MintableErc20, amount: string) => {
   for (const wallet of wallets) {
-    await waitForTx(await plmyToken.connect(wallet).mint(amount));
+    await waitForTx(await woasToken.connect(wallet).mint(amount));
   }
 };
 
 const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallets: Signer[]) => {
   console.time('setup');
 
-  const plmyToken = await deployMintableErc20(['Palmy', 'WOAS', 18]);
+  const woasToken = await deployMintableErc20(['Palmy', 'WOAS', 18]);
 
-  await waitForTx(await plmyToken.connect(vaultOfRewards).mint(ethers.utils.parseEther('1000000')));
+  await waitForTx(await woasToken.connect(vaultOfRewards).mint(ethers.utils.parseEther('1000000')));
   await topUpWalletsWithOas(
     [
       restWallets[0],
@@ -29,14 +29,14 @@ const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallet
       restWallets[4],
       restWallets[5],
     ],
-    plmyToken,
+    woasToken,
     ethers.utils.parseEther('100').toString()
   );
 
-  await testDeployStakedRayV2(plmyToken, deployer, vaultOfRewards, restWallets);
+  await testDeployStakedRayV2(woasToken, deployer, vaultOfRewards, restWallets);
 
   const { incentivesControllerProxy } = await testDeployStakedRayV1(
-    plmyToken,
+    woasToken,
     deployer,
     vaultOfRewards,
     restWallets
@@ -45,7 +45,7 @@ const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallet
   await deployATokenMock(incentivesControllerProxy.address, 'lDai');
   await deployATokenMock(incentivesControllerProxy.address, 'lWeth');
   const toVaultAmount = parseEther('2000');
-  await plmyToken.mint(toVaultAmount);
+  await woasToken.mint(toVaultAmount);
   console.timeEnd('setup');
 };
 
