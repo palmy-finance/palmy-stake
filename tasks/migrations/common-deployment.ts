@@ -11,7 +11,7 @@ task('common-deployment', 'Deployment in for Main, Kovan networks')
     'vaultAddress',
     'Use IncentivesVault address by param instead of configuration.'
   )
-  .addOptionalParam('tokenAddress', 'Use OalToken address by param instead of configuration.')
+  .addOptionalParam('tokenAddress', 'Use SToken address by param instead of configuration.')
   .setAction(async ({ verify, vaultAddress, tokenAddress }, localBRE) => {
     const DRE: HardhatRuntimeEnvironment = await localBRE.run('set-dre');
     const network = DRE.network.name as eEthereumNetwork;
@@ -28,9 +28,9 @@ task('common-deployment', 'Deployment in for Main, Kovan networks')
       checkVerification();
     }
 
-    await DRE.run(`deploy-${eContractid.StakedPalmy}`, { verify, vaultAddress, tokenAddress });
+    await DRE.run(`deploy-${eContractid.StakedOas}`, { verify, vaultAddress, tokenAddress });
 
-    await DRE.run(`initialize-${eContractid.StakedPalmy}`, {
+    await DRE.run(`initialize-${eContractid.StakedOas}`, {
       admin: admin,
     });
 
@@ -42,5 +42,5 @@ task('common-deployment', 'Deployment in for Main, Kovan networks')
     await DRE.run(`initialize-${eContractid.StakedTokenV2Rev4}`, {
       admin: admin,
     });
-    console.log(`\n✔️ Finished the deployment of the Oal Token ${network} Enviroment. ✔️`);
+    console.log(`\n✔️ Finished the deployment of the Oas Token ${network} Enviroment. ✔️`);
   });

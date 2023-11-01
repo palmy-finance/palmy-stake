@@ -15,8 +15,8 @@ import { MAX_UINT_AMOUNT } from '../helpers/constants';
 import { IPalmyGovernanceV2 } from '../types/IPalmyGovernanceV2';
 import { ILendingPool } from '../types/ILendingPool';
 import {
-  StakedPalmyV2,
-  StakedPalmyV2__factory,
+  StakedOasV2,
+  StakedOasV2__factory,
   Erc20,
   SelfdestructTransfer__factory,
   Erc20__factory,
@@ -34,7 +34,7 @@ const {
   POOL_CONFIGURATOR = '0x311bb771e4f8952e6da169b425e7e92d6ac45756',
   POOL_DATA_PROVIDER = '0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d',
   ECO_RESERVE = '0x25F2226B597E8F9514B3F68F00f494cF4f286491',
-  OAL_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
+  WOAS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9',
   IPFS_HASH = 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', // WIP
   GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c', // mainnet
   LONG_EXECUTOR = '0x61910ecd7e8e942136ce7fe7943f956cea1cc2f7', // mainnet
@@ -45,7 +45,7 @@ if (
   !POOL_CONFIGURATOR ||
   !POOL_DATA_PROVIDER ||
   !ECO_RESERVE ||
-  !OAL_TOKEN ||
+  !WOAS_TOKEN ||
   !IPFS_HASH ||
   !GOVERNANCE_V2 ||
   !LONG_EXECUTOR
@@ -60,13 +60,13 @@ const WHALE = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
 const WHALE_2 = '0xbe0eb53f46cd790cd13851d5eff43d12404d33e8';
 
 const BPT_POOL_TOKEN = '0x41a08648c3766f9f9d85598ff102a08f4ef84f84';
-const STAKED_OAL = '0x4da27a545c0c5B758a6BA100e3a049001de870f5';
+const STAKED_WOAS = '0x4da27a545c0c5B758a6BA100e3a049001de870f5';
 const BPT_STAKE = '0xa1116930326D21fB917d5A27F1E9943A9595fb47';
 const DAI_TOKEN = '0x6b175474e89094c44da98b954eedeac495271d0f';
 const DAI_HOLDER = '0x72aabd13090af25dbb804f84de6280c697ed1150';
 const BPT_WHALE = '0xc1c3f183b71f52b4f5f8f0dd8eb023cdafd2fc93';
 
-describe('Proposal: Extend Staked Oal distribution', () => {
+describe('Proposal: Extend Staked OAS distribution', () => {
   let ethers;
 
   let whale: JsonRpcSigner;
@@ -79,9 +79,9 @@ describe('Proposal: Extend Staked Oal distribution', () => {
   let dai: Erc20;
   let aDAI: Erc20;
   let proposalId: BigNumber;
-  let StakedPalmyV2: StakedPalmyV2;
-  let bptStakeV2: StakedPalmyV2;
-  let stkOalImplAddress: string;
+  let StakedOasV2: StakedOasV2;
+  let bptStakeV2: StakedOasV2;
+  let stkOasImplAddress: string;
   let stkBptImplAddress: string;
   let stakedTokenV2Revision3Implementation: StakedTokenV2Rev3;
   let stakedBptV2Revision2Implementation: StakedTokenBptRev2;
@@ -90,7 +90,7 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     ethers = DRE.ethers;
     [proposer] = await DRE.ethers.getSigners();
 
-    // Send ether to the OAL_WHALE, which is a non payable contract via selfdestruct
+    // Send ether to the WOAS_WHALE, which is a non payable contract via selfdestruct
     const selfDestructContract = await new SelfdestructTransfer__factory(proposer).deploy();
     await (
       await selfDestructContract.destroyAndTransfer(WHALE, {
@@ -121,26 +121,26 @@ describe('Proposal: Extend Staked Oal distribution', () => {
 
     const { aTokenAddress } = await pool.getReserveData(DAI_TOKEN);
 
-    plmyToken = Erc20__factory.connect(OAL_TOKEN, whale);
+    plmyToken = Erc20__factory.connect(WOAS_TOKEN, whale);
     plmyBpt = Erc20__factory.connect(BPT_POOL_TOKEN, bptWhale);
-    StakedPalmyV2 = StakedPalmyV2__factory.connect(STAKED_OAL, proposer);
-    bptStakeV2 = StakedPalmyV2__factory.connect(BPT_STAKE, proposer);
+    StakedOasV2 = StakedOasV2__factory.connect(STAKED_WOAS, proposer);
+    bptStakeV2 = StakedOasV2__factory.connect(BPT_STAKE, proposer);
     dai = Erc20__factory.connect(DAI_TOKEN, daiHolder);
     aDAI = Erc20__factory.connect(aTokenAddress, proposer);
 
-    // Transfer enough OAL to proposer
+    // Transfer enough WOAS to proposer
     await (await plmyToken.transfer(proposer.address, parseEther('2000000'))).wait();
-    // Transfer enough OAL to proposer
+    // Transfer enough WOAS to proposer
     await (await plmyToken.connect(whale2).transfer(proposer.address, parseEther('1200000'))).wait();
     // Transfer DAI to repay future DAI loan
     await (await dai.transfer(proposer.address, parseEther('100000'))).wait();
-    // Transfer OAL BPT pool shares to proposer
+    // Transfer WOAS BPT pool shares to proposer
     await (await plmyBpt.transfer(proposer.address, parseEther('100'))).wait();
   });
 
   it('Proposal should be created', async () => {
     await advanceBlockTo((await latestBlock()) + 10);
-    const govToken = IDelegationAwareToken__factory.connect(OAL_TOKEN, proposer);
+    const govToken = IDelegationAwareToken__factory.connect(WOAS_TOKEN, proposer);
 
     try {
       const balance = await plmyToken.balanceOf(proposer.address);
@@ -165,11 +165,11 @@ describe('Proposal: Extend Staked Oal distribution', () => {
       'proposal-stk-extensions'
     );
 
-    stkOalImplAddress = staledTokenImpl;
+    stkOasImplAddress = staledTokenImpl;
     stkBptImplAddress = stkBptImpl;
 
     stakedTokenV2Revision3Implementation = StakedTokenV2Rev3__factory.connect(
-      stkOalImplAddress,
+      stkOasImplAddress,
       proposer
     );
     stakedBptV2Revision2Implementation = StakedTokenBptRev2__factory.connect(
@@ -222,35 +222,35 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     expect(proposalState).to.be.equal(7);
   });
 
-  it('Users should be able to stake OAL', async () => {
+  it('Users should be able to stake WOAS', async () => {
     const amount = parseEther('10');
-    await waitForTx(await plmyToken.connect(proposer).approve(StakedPalmyV2.address, amount));
-    await expect(StakedPalmyV2.connect(proposer).stake(proposer.address, amount)).to.emit(
-      StakedPalmyV2,
+    await waitForTx(await plmyToken.connect(proposer).approve(StakedOasV2.address, amount));
+    await expect(StakedOasV2.connect(proposer).stake(proposer.address, amount)).to.emit(
+      StakedOasV2,
       'Staked'
     );
   });
 
-  it('Users should be able to redeem StakedPalmy', async () => {
+  it('Users should be able to redeem StakedOas', async () => {
     const amount = parseEther('1');
     await increaseTimeAndMineTenderly(48600);
 
     try {
-      await waitForTx(await StakedPalmyV2.cooldown({ gasLimit: 3000000 }));
+      await waitForTx(await StakedOasV2.cooldown({ gasLimit: 3000000 }));
 
-      const COOLDOWN_SECONDS = await StakedPalmyV2.COOLDOWN_SECONDS();
+      const COOLDOWN_SECONDS = await StakedOasV2.COOLDOWN_SECONDS();
       await increaseTimeAndMineTenderly(Number(COOLDOWN_SECONDS.toString()));
 
       await expect(
-        StakedPalmyV2.connect(proposer).redeem(proposer.address, amount, { gasLimit: 3000000 })
-      ).to.emit(StakedPalmyV2, 'Redeem');
+        StakedOasV2.connect(proposer).redeem(proposer.address, amount, { gasLimit: 3000000 })
+      ).to.emit(StakedOasV2, 'Redeem');
     } catch (error) {
       logError();
       throw error;
     }
   });
 
-  it('Users should be able to stake OAL Pool BPT', async () => {
+  it('Users should be able to stake WOAS Pool BPT', async () => {
     const amount = parseEther('10');
     await waitForTx(await plmyBpt.connect(proposer).approve(bptStakeV2.address, amount));
     await expect(bptStakeV2.connect(proposer).stake(proposer.address, amount)).to.emit(
@@ -259,7 +259,7 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     );
   });
 
-  it('Users should be able to redeem Oal via redeem stkBpt', async () => {
+  it('Users should be able to redeem Oas via redeem stkBpt', async () => {
     const amount = parseEther('1');
     await increaseTimeAndMineTenderly(48600);
 
@@ -278,9 +278,9 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     }
   });
 
-  it('Users should be able to transfer StakedPalmy', async () => {
-    await expect(StakedPalmyV2.transfer(whale._address, parseEther('1'))).emit(
-      StakedPalmyV2,
+  it('Users should be able to transfer StakedOas', async () => {
+    await expect(StakedOasV2.transfer(whale._address, parseEther('1'))).emit(
+      StakedOasV2,
       'Transfer'
     );
   });
@@ -289,15 +289,15 @@ describe('Proposal: Extend Staked Oal distribution', () => {
     await expect(bptStakeV2.transfer(whale._address, parseEther('1'))).emit(bptStakeV2, 'Transfer');
   });
 
-  it('Staked Oal Distribution End should be extended', async () => {
+  it('Staked OAS Distribution End should be extended', async () => {
     const implDistributionEnd = await stakedTokenV2Revision3Implementation.DISTRIBUTION_END();
-    const proxyDistributionEnd = await StakedPalmyV2.DISTRIBUTION_END();
+    const proxyDistributionEnd = await StakedOasV2.DISTRIBUTION_END();
 
     expect(implDistributionEnd).to.be.eq(proxyDistributionEnd, 'DISTRIBUTION_END SHOULD MATCH');
   });
-  it('Staked Oal revision should be 3', async () => {
+  it('Staked OAS revision should be 3', async () => {
     const revisionImpl = await stakedTokenV2Revision3Implementation.REVISION();
-    const revisionProxy = await StakedPalmyV2.REVISION();
+    const revisionProxy = await StakedOasV2.REVISION();
 
     expect(revisionImpl).to.be.eq(revisionProxy, 'DISTRIBUTION_END SHOULD MATCH');
     expect(revisionProxy).to.be.eq('3', 'DISTRIBUTION_END SHOULD MATCH');

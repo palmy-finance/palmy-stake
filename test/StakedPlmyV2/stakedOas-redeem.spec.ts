@@ -25,7 +25,7 @@ makeSuite('StakedToken V2. Redeem', (testEnv: TestEnv) => {
   });
 
   it('User 1 stakes 50 Token', async () => {
-    const { stakedTokenV2, plmyToken: plmyToken, users } = testEnv;
+    const { stakedTokenV2, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
@@ -79,7 +79,7 @@ makeSuite('StakedToken V2. Redeem', (testEnv: TestEnv) => {
   });
 
   it('User 1 activates the cooldown again, and tries to redeem a bigger amount that he has staked, receiving the balance', async () => {
-    const { stakedTokenV2, plmyToken: plmyToken, users } = testEnv;
+    const { stakedTokenV2, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('1000');
     const staker = users[1];
 
@@ -106,7 +106,7 @@ makeSuite('StakedToken V2. Redeem', (testEnv: TestEnv) => {
   });
 
   it('User 1 activates the cooldown again, and redeems within the unstake period', async () => {
-    const { stakedTokenV2, plmyToken: plmyToken, users } = testEnv;
+    const { stakedTokenV2, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[1];
 
@@ -133,7 +133,7 @@ makeSuite('StakedToken V2. Redeem', (testEnv: TestEnv) => {
   });
 
   it('User 4 stakes 50 Token, activates the cooldown and redeems half of the amount', async () => {
-    const { stakedTokenV2, plmyToken: plmyToken, users } = testEnv;
+    const { stakedTokenV2, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[5];
 
@@ -161,7 +161,7 @@ makeSuite('StakedToken V2. Redeem', (testEnv: TestEnv) => {
   });
 
   it('User 5 stakes 50 Token, activates the cooldown and redeems with rewards not enabled', async () => {
-    const { stakedTokenV2, plmyToken: plmyToken, users } = testEnv;
+    const { stakedTokenV2, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const staker = users[5];
 

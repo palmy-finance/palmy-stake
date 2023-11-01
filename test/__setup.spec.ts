@@ -8,7 +8,7 @@ import { MintableErc20 } from '../types/MintableErc20';
 import { testDeployStakedRayV2, testDeployStakedRayV1 } from './helpers/deploy';
 import { parseEther } from 'ethers/lib/utils';
 
-const topUpWalletsWithOal = async (wallets: Signer[], plmyToken: MintableErc20, amount: string) => {
+const topUpWalletsWithOas = async (wallets: Signer[], plmyToken: MintableErc20, amount: string) => {
   for (const wallet of wallets) {
     await waitForTx(await plmyToken.connect(wallet).mint(amount));
   }
@@ -17,10 +17,10 @@ const topUpWalletsWithOal = async (wallets: Signer[], plmyToken: MintableErc20, 
 const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallets: Signer[]) => {
   console.time('setup');
 
-  const plmyToken = await deployMintableErc20(['Palmy', 'OAL', 18]);
+  const plmyToken = await deployMintableErc20(['Palmy', 'WOAS', 18]);
 
   await waitForTx(await plmyToken.connect(vaultOfRewards).mint(ethers.utils.parseEther('1000000')));
-  await topUpWalletsWithOal(
+  await topUpWalletsWithOas(
     [
       restWallets[0],
       restWallets[1],

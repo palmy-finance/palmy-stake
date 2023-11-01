@@ -17,8 +17,8 @@ export enum eAstarNetwork {
 
 export enum eContractid {
   DistributionManager = 'DistributionManager',
-  StakedPalmy = 'StakedPalmy',
-  StakedPalmyImpl = 'StakedPalmyImpl',
+  StakedOas = 'StakedOas',
+  StakedOasImpl = 'StakedOasImpl',
   IncentivesController = 'IncentivesController',
   IERC20Detailed = 'IERC20Detailed',
   AdminUpgradeabilityProxy = 'AdminUpgradeabilityProxy',
@@ -27,7 +27,7 @@ export enum eContractid {
   LendingPoolMock = 'LendingPoolMock',
   MockTransferHook = 'MockTransferHook',
   ATokenMock = 'ATokenMock',
-  StakedPalmyV2 = 'StakedPalmyV2',
+  StakedOasV2 = 'StakedOasV2',
   DoubleTransferHelper = 'DoubleTransferHelper',
   ICRPFactory = 'ICRPFactory',
   StakedTokenV2 = 'StakedTokenV2',

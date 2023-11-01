@@ -1,4 +1,4 @@
-import { deployStakedPalmy } from '../../helpers/contracts-accessors';
+import { deployStakedOas } from '../../helpers/contracts-accessors';
 import { makeSuite, TestEnv } from '../helpers/make-suite';
 import {
   COOLDOWN_SECONDS,
@@ -20,7 +20,7 @@ const { expect } = require('chai');
 
 makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('Initial configuration after initialize() is correct', async () => {
-    const { stakedToken, plmyToken, rewardsVault } = testEnv;
+    const { stakedToken, woasToken: plmyToken, rewardsVault } = testEnv;
 
     expect(await stakedToken.name()).to.be.equal(STAKED_TOKEN_NAME);
     expect(await stakedToken.symbol()).to.be.equal(STAKED_TOKEN_SYMBOL);
@@ -33,9 +33,9 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
     expect(await stakedToken.REWARDS_VAULT()).to.be.equal(rewardsVault.address);
   });
   it('Reverts trying to constract with zero_address', async () => {
-    const { stakedToken, plmyToken, rewardsVault } = testEnv;
+    const { stakedToken, woasToken: plmyToken, rewardsVault } = testEnv;
     await expect(
-      deployStakedPalmy([
+      deployStakedOas([
         ZERO_ADDRESS,
         plmyToken.address,
         '100',
@@ -46,7 +46,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
       ])
     ).to.be.revertedWith('Cannot set the stakedToken to the zero address');
     await expect(
-      deployStakedPalmy([
+      deployStakedOas([
         stakedToken.address,
         ZERO_ADDRESS,
         '100',
@@ -57,7 +57,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
       ])
     ).to.be.revertedWith('Cannot set the rewardToken to the zero address');
     await expect(
-      deployStakedPalmy([
+      deployStakedOas([
         stakedToken.address,
         stakedToken.address,
         '100',
@@ -68,7 +68,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
       ])
     ).to.be.revertedWith('Cannot set the rewardsVault to the zero address');
     await expect(
-      deployStakedPalmy([
+      deployStakedOas([
         stakedToken.address,
         stakedToken.address,
         '100',
@@ -106,7 +106,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 stakes 50 Token: receives 50 sToken, StakedToken balance of Token is 50 and his rewards to claim are 0', async () => {
     const {
       stakedToken,
-      plmyToken,
+      woasToken: plmyToken,
       users: [, staker],
     } = testEnv;
     const amount = ethers.utils.parseEther('50');
@@ -138,7 +138,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 stakes 20 Token more: his total sToken balance increases, StakedToken balance of Token increases and his reward until now get accumulated', async () => {
     const {
       stakedToken,
-      plmyToken,
+      woasToken: plmyToken,
       users: [, staker],
     } = testEnv;
     const amount = ethers.utils.parseEther('20');
@@ -166,7 +166,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 claim half rewards ', async () => {
     const {
       stakedToken,
-      plmyToken,
+      woasToken: plmyToken,
       users: [, staker],
     } = testEnv;
     // Increase time for bigger rewards
@@ -184,7 +184,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 tries to claim higher reward than current rewards balance', async () => {
     const {
       stakedToken,
-      plmyToken,
+      woasToken: plmyToken,
       users: [, staker],
     } = testEnv;
 
@@ -204,7 +204,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   it('User 1 claim all rewards', async () => {
     const {
       stakedToken,
-      plmyToken: plmyToken,
+      woasToken: plmyToken,
       users: [, staker],
     } = testEnv;
 
@@ -236,7 +236,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
 
   it('User 6 stakes 50 Token, with the rewards not enabled', async () => {
-    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
+    const { stakedToken, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('50');
     const sixStaker = users[5];
 
@@ -267,7 +267,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
 
   it('User 6 stakes 30 Token more, with the rewards not enabled', async () => {
-    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
+    const { stakedToken, woasToken: plmyToken, users } = testEnv;
     const amount = ethers.utils.parseEther('30');
     const staker = users[1];
     const sixStaker = users[5];
@@ -296,7 +296,7 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
 
   it('Validates staker cooldown with stake() while being on valid unstake window', async () => {
-    const { stakedToken, plmyToken: plmyToken, users } = testEnv;
+    const { stakedToken, woasToken: plmyToken, users } = testEnv;
     const amount1 = ethers.utils.parseEther('50');
     const amount2 = ethers.utils.parseEther('20');
     const staker = users[4];

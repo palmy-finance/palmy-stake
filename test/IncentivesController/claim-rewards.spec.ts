@@ -80,7 +80,7 @@ makeSuite('IncentivesController claimRewards tests', (testEnv) => {
     let amountToClaim = _amountToClaim;
     it(caseName, async () => {
       await increaseTimeAndMine(100);
-      const { incentivesController, stakedToken, plmyToken, aDaiMock } = testEnv;
+      const { incentivesController, stakedToken, woasToken: plmyToken, aDaiMock } = testEnv;
 
       const distributionEndTimestamp = await incentivesController.DISTRIBUTION_END();
       const userAddress = await incentivesController.signer.getAddress();

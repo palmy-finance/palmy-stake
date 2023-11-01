@@ -6,18 +6,18 @@ import { tEthereumAddress } from '../../helpers/types';
 import chai from 'chai';
 // @ts-ignore
 import bignumberChai from 'chai-bignumber';
-import { StakedPalmy } from '../../types/StakedPalmy';
+import { StakedOas } from '../../types/StakedOas';
 import {
   getIncentivesController,
   getATokenMock,
   getMintableErc20,
-  getStakedPalmy,
-  getStakedPalmyV2,
+  getStakedOas,
+  getStakedOasV2,
 } from '../../helpers/contracts-accessors';
 import { IncentivesController } from '../../types/IncentivesController';
 import { MintableErc20 } from '../../types/MintableErc20';
 import { ATokenMock } from '../../types/ATokenMock';
-import { StakedPalmyV2 } from '../../types/StakedPalmyV2';
+import { StakedOasV2 } from '../../types/StakedOasV2';
 
 chai.use(bignumberChai());
 
@@ -31,13 +31,13 @@ export interface SignerWithAddress {
   address: tEthereumAddress;
 }
 export interface TestEnv {
-  stakedTokenV2: StakedPalmyV2;
+  stakedTokenV2: StakedOasV2;
   rewardsVault: SignerWithAddress;
   deployer: SignerWithAddress;
   users: SignerWithAddress[];
-  plmyToken: MintableErc20;
+  woasToken: MintableErc20;
   incentivesController: IncentivesController;
-  stakedToken: StakedPalmy;
+  stakedToken: StakedOas;
   aDaiMock: ATokenMock;
   aWethMock: ATokenMock;
 }
@@ -52,9 +52,9 @@ const setBuidlerevmSnapshotId = (id: string) => {
 const testEnv: TestEnv = {
   deployer: {} as SignerWithAddress,
   users: [] as SignerWithAddress[],
-  plmyToken: {} as MintableErc20,
-  stakedToken: {} as StakedPalmy,
-  stakedTokenV2: {} as StakedPalmyV2,
+  woasToken: {} as MintableErc20,
+  stakedToken: {} as StakedOas,
+  stakedTokenV2: {} as StakedOasV2,
   incentivesController: {} as IncentivesController,
   aDaiMock: {} as ATokenMock,
   aWethMock: {} as ATokenMock,
@@ -80,10 +80,10 @@ export async function initializeMakeSuite() {
   }
   testEnv.deployer = deployer;
   testEnv.rewardsVault = rewardsVault;
-  testEnv.stakedToken = await getStakedPalmy();
-  testEnv.stakedTokenV2 = await getStakedPalmyV2();
+  testEnv.stakedToken = await getStakedOas();
+  testEnv.stakedTokenV2 = await getStakedOasV2();
   testEnv.incentivesController = await getIncentivesController();
-  testEnv.plmyToken = await getMintableErc20();
+  testEnv.woasToken = await getMintableErc20();
   testEnv.aDaiMock = await getATokenMock({ slug: 'lDai' });
   testEnv.aWethMock = await getATokenMock({ slug: 'lWeth' });
 }

@@ -2,8 +2,8 @@ import { StakedTokenV2Rev4 } from './../types/StakedTokenV2Rev4.d';
 import { deployContract, getContractFactory, getContract } from './contracts-helpers';
 import { eContractid, tEthereumAddress } from './types';
 import { MintableErc20 } from '../types/MintableErc20';
-import { StakedPalmy } from '../types/StakedPalmy';
-import { StakedPalmyV2 } from '../types/StakedPalmyV2';
+import { StakedOas } from '../types/StakedOas';
+import { StakedOasV2 } from '../types/StakedOasV2';
 import { IcrpFactory } from '../types/IcrpFactory'; // Configurable right pool factory
 import { IConfigurableRightsPool } from '../types/IConfigurableRightsPool';
 import { IControllerPalmyEcosystemReserve } from '../types/IControllerPalmyEcosystemReserve';
@@ -23,7 +23,7 @@ import { ZERO_ADDRESS } from './constants';
 import { Signer } from 'ethers';
 import { StakedTokenBptRev2, StakedTokenV2Rev3 } from '../types';
 
-export const deployStakedPalmy = async (
+export const deployStakedOas = async (
   [
     stakedToken,
     rewardsToken,
@@ -43,7 +43,7 @@ export const deployStakedPalmy = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedPalmy;
+  const id = eContractid.StakedOas;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -53,14 +53,14 @@ export const deployStakedPalmy = async (
     emissionManager,
     distributionDuration,
   ];
-  const instance = await deployContract<StakedPalmy>(id, args);
+  const instance = await deployContract<StakedOas>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
   return instance;
 };
 
-export const deployStakedPalmyV2 = async (
+export const deployStakedOasV2 = async (
   [
     stakedToken,
     rewardsToken,
@@ -80,7 +80,7 @@ export const deployStakedPalmyV2 = async (
   ],
   verify?: boolean
 ) => {
-  const id = eContractid.StakedPalmyV2;
+  const id = eContractid.StakedOasV2;
   const args: string[] = [
     stakedToken,
     rewardsToken,
@@ -91,7 +91,7 @@ export const deployStakedPalmyV2 = async (
     distributionDuration,
     ZERO_ADDRESS, // gov address
   ];
-  const instance = await deployContract<StakedPalmyV2>(id, args);
+  const instance = await deployContract<StakedOasV2>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);
   }
@@ -417,22 +417,22 @@ export const deployDoubleTransferHelper = async (token: tEthereumAddress, verify
 
 export const getMintableErc20 = getContractFactory<MintableErc20>(eContractid.MintableErc20);
 
-export const getStakedPalmy = getContractFactory<StakedPalmy>(eContractid.StakedPalmy);
-export const getStakedPalmyV2 = getContractFactory<StakedPalmyV2>(eContractid.StakedPalmyV2);
+export const getStakedOas = getContractFactory<StakedOas>(eContractid.StakedOas);
+export const getStakedOasV2 = getContractFactory<StakedOasV2>(eContractid.StakedOasV2);
 
-export const getStakedPalmyProxy = async (address?: tEthereumAddress) => {
+export const getStakedOasProxy = async (address?: tEthereumAddress) => {
   return await getContract<InitializableAdminUpgradeabilityProxy>(
     eContractid.InitializableAdminUpgradeabilityProxy,
-    address || (await getDb().get(`${eContractid.StakedPalmy}.${DRE.network.name}`).value()).address
+    address || (await getDb().get(`${eContractid.StakedOas}.${DRE.network.name}`).value()).address
   );
 };
 
-export const getStakedPalmyImpl = async (address?: tEthereumAddress) => {
-  return await getContract<StakedPalmy>(
-    eContractid.StakedPalmy,
+export const getStakedOasImpl = async (address?: tEthereumAddress) => {
+  return await getContract<StakedOas>(
+    eContractid.StakedOas,
     address ||
       (
-        await getDb().get(`${eContractid.StakedPalmyImpl}.${DRE.network.name}`).value()
+        await getDb().get(`${eContractid.StakedOasImpl}.${DRE.network.name}`).value()
       ).address
   );
 };

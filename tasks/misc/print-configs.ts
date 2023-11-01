@@ -8,7 +8,7 @@ task('print-configs', 'print configuration about staked token').setAction(async 
   const network = localBRE.network.name as eAstarNetwork;
   const signers = await DRE.ethers.getSigners();
   const account = signers[0]; // if emissionManager, change this index of signers array
-  const contractId = eContractid.StakedPalmy;
+  const contractId = eContractid.StakedOas;
   const contractAddress = (await getDb().get(`${contractId}.${network}`).value()).address;
 
   console.log('--- Start Task ---');

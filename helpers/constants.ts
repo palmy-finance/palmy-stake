@@ -9,13 +9,13 @@ export const COOLDOWN_SECONDS = '3600'; // 1 hour in seconds
 export const UNSTAKE_WINDOW = '1800'; // 30 min in seconds
 export const DISTRIBUTION_DURATION = '86400'; // 1 day in seconds
 
-export const STAKED_TOKEN_NAME = 'Staked Palmy';
-export const STAKED_TOKEN_SYMBOL = 'sOAL';
+export const STAKED_TOKEN_NAME = 'Staked OAS';
+export const STAKED_TOKEN_SYMBOL = 'sOAS';
 export const STAKED_TOKEN_DECIMALS = 18;
 
 export const GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c';
 export const UPGRADABLE_CRP_FACTORY = '0x1156C30b08DbF16281c803EAe0d52Eee7652f10C';
-export const OAL_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
+export const WOAS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
 export const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 export const REWARDS_VAULT = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
 export const BPOOL_FACTORY = '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd';
@@ -46,14 +46,14 @@ export const RANDOM_ADDRESSES = [
   '0x0000000000000000000000000000000000000721',
 ];
 
-// OALToken's proxy
+// WOASToken's proxy
 export const getTokenPerNetwork = (network: eEthereumNetwork | eAstarNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.coverage]: ZERO_ADDRESS,
       [eEthereumNetwork.hardhat]: '0x75AC15EbCA4e93D61bCc878ded9Ba338FD23E761',
       [eEthereumNetwork.rinkeby]: ZERO_ADDRESS,
-      [eEthereumNetwork.kovan]: '0x75AC15EbCA4e93D61bCc878ded9Ba338FD23E761', // Mock OAL Token
+      [eEthereumNetwork.kovan]: '0x75AC15EbCA4e93D61bCc878ded9Ba338FD23E761', // Mock WOAS Token
       [eEthereumNetwork.main]: '0x9c0435779F5E52CEC404D957C9bAa6f7d674C8bA',
       [eAstarNetwork.astar]: '0xc4335B1b76fA6d52877b3046ECA68F6E708a27dd',
       [eAstarNetwork.shiden]: '0xb163716cb6c8b0a56e4f57c394A50F173E34181b',

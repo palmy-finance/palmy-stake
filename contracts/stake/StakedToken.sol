@@ -3,7 +3,7 @@ pragma solidity 0.7.5;
 pragma experimental ABIEncoderV2;
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedPalmy} from '../interfaces/IStakedPalmy.sol';
+import {IStakedOas} from '../interfaces/IStakedOas.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 import {ERC20WithSnapshot} from '../lib/ERC20WithSnapshot.sol';
 import {SafeERC20} from '../lib/SafeERC20.sol';
@@ -14,15 +14,10 @@ import {SafeMath} from '../lib/SafeMath.sol';
 
 /**
  * @title StakedToken
- * @notice Contract to stake OAL token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @notice Contract to stake WOAS token, tokenize the position and get rewards, inheriting from a distribution manager contract
  * @author Palmy finance
  **/
-contract StakedToken is
-  IStakedPalmy,
-  ERC20WithSnapshot,
-  VersionedInitializable,
-  DistributionManager
-{
+contract StakedToken is IStakedOas, ERC20WithSnapshot, VersionedInitializable, DistributionManager {
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 

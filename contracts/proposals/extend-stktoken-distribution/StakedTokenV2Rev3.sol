@@ -707,7 +707,7 @@ contract ERC20 is Context, IERC20 {
   function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {}
 }
 
-interface IStakedPalmy {
+interface IStakedOas {
   function stake(address to, uint256 amount) external;
 
   function redeem(address to, uint256 amount) external;
@@ -887,7 +887,7 @@ contract DistributionManager is IDistributionManager {
 
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
-   * @param underlyingAsset The address used as key in the distribution, for example sOAL or the aTokens addresses on Palmy
+   * @param underlyingAsset The address used as key in the distribution, for example sOAS or the aTokens addresses on Palmy
    * @param assetConfig Storage pointer to the distribution's config
    * @param totalStaked Current total of staked assets for this distribution
    * @return The new distribution index
@@ -1067,7 +1067,7 @@ contract DistributionManager is IDistributionManager {
 }
 
 /**
- * @notice implementation of the OAL token contract
+ * @notice implementation of the WOAS token contract
  * @author Palmy finance
  */
 abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDelegationToken {
@@ -1155,8 +1155,8 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
   /**
    * @dev returns the total supply at a certain block number
    * used by the voting strategy contracts to calculate the total votes needed for threshold/quorum
-   * In this initial implementation with no OAL minting, simply returns the current supply
-   * A snapshots mapping will need to be added in case a mint function is added to the OAL token in the future
+   * In this initial implementation with no WOAS minting, simply returns the current supply
+   * A snapshots mapping will need to be added in case a mint function is added to the WOAS token in the future
    **/
   function totalSupplyAt(uint256 blockNumber) external view override returns (uint256) {
     return super.totalSupply();
@@ -1300,7 +1300,7 @@ abstract contract GovernancePowerDelegationERC20 is ERC20, IGovernancePowerDeleg
   /**
    * @dev returns the delegation data (snapshot, snapshotsCount, list of delegates) by delegation type
    * NOTE: Ideal implementation would have mapped this in a struct by delegation type. Unfortunately,
-   * the OAL token and StakeToken already include a mapping for the snapshots, so we require contracts
+   * the WOAS token and StakeToken already include a mapping for the snapshots, so we require contracts
    * who inherit from this to provide access to the delegation data by overriding this method.
    * @param delegationType the type of delegation
    **/
@@ -1395,11 +1395,11 @@ abstract contract GovernancePowerWithSnapshot is GovernancePowerDelegationERC20 
 
 /**
  * @title StakedToken
- * @notice Contract to stake OAL token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @notice Contract to stake WOAS token, tokenize the position and get rewards, inheriting from a distribution manager contract
  * @author Palmy finance
  **/
 contract StakedTokenV2Rev3 is
-  IStakedPalmy,
+  IStakedOas,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
   DistributionManager

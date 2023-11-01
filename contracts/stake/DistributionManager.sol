@@ -68,7 +68,7 @@ contract DistributionManager is IDistributionManager {
 
   /**
    * @dev Updates the state of one distribution, mainly rewards index and timestamp
-   * @param underlyingAsset The address used as key in the distribution, for example sOAL or the aTokens addresses on OAL
+   * @param underlyingAsset The address used as key in the distribution, for example sOAS or the aTokens addresses on WOAS
    * @param assetConfig Storage pointer to the distribution's config
    * @param totalStaked Current total of staked assets for this distribution
    * @return The new distribution index

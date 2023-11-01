@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers';
 import { DistributionManager } from '../../../types/DistributionManager';
-import { StakedPalmy } from '../../../types/StakedPalmy';
+import { StakedOas } from '../../../types/StakedOas';
 import { IncentivesController } from '../../../types/IncentivesController';
-import { StakedPalmyV2 } from '../../../types/StakedPalmyV2';
+import { StakedOasV2 } from '../../../types/StakedOasV2';
 
 export type UserStakeInput = {
   underlyingAsset: string;
@@ -14,7 +14,7 @@ export type UserPositionUpdate = UserStakeInput & {
   user: string;
 };
 export async function getUserIndex(
-  distributionManager: DistributionManager | IncentivesController | StakedPalmy | StakedPalmyV2,
+  distributionManager: DistributionManager | IncentivesController | StakedOas | StakedOasV2,
   user: string,
   asset: string
 ): Promise<BigNumber> {

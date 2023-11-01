@@ -11,21 +11,21 @@ import {
   getIncentivesVaultPerNetwork,
 } from '../../helpers/constants';
 import {
-  deployStakedPalmy,
+  deployStakedOas,
   deployInitializableAdminUpgradeabilityProxy,
 } from '../../helpers/contracts-accessors';
 import { checkVerification } from '../../helpers/etherscan-verification';
 import { ethers } from 'hardhat';
 
-const { StakedPalmy, StakedPalmyImpl } = eContractid;
+const { StakedOas, StakedOasImpl } = eContractid;
 
-task(`deploy-${StakedPalmy}`, `Deploys the ${StakedPalmy} contract`)
+task(`deploy-${StakedOas}`, `Deploys the ${StakedOas} contract`)
   .addFlag('verify', 'Verify StakedToken contract via Etherscan API.')
   .addOptionalParam(
     'vaultAddress',
     'Use IncentivesVault address by param instead of configuration.'
   )
-  .addOptionalParam('tokenAddress', 'Use OalToken address by param instead of configuration.')
+  .addOptionalParam('tokenAddress', 'Use OasToken address by param instead of configuration.')
   .setAction(async ({ verify, vaultAddress, tokenAddress }, localBRE) => {
     await localBRE.run('set-dre');
 
@@ -40,11 +40,11 @@ task(`deploy-${StakedPalmy}`, `Deploys the ${StakedPalmy} contract`)
 
     const network = localBRE.network.name as eEthereumNetwork | eAstarNetwork;
 
-    console.log(`\n- ${StakedPalmy} deployment`);
+    console.log(`\n- ${StakedOas} deployment`);
 
-    console.log(`\tDeploying ${StakedPalmy} implementation ...`);
+    console.log(`\tDeploying ${StakedOas} implementation ...`);
     const admin = getAdminPerNetwork(network);
-    const stakedPalmyImpl = await deployStakedPalmy(
+    const stakedPalmyImpl = await deployStakedOas(
       [
         tokenAddress || getTokenPerNetwork(network),
         tokenAddress || getTokenPerNetwork(network),
@@ -57,14 +57,14 @@ task(`deploy-${StakedPalmy}`, `Deploys the ${StakedPalmy} contract`)
       false // disable verify due not supported by current buidler etherscan plugin
     );
     await stakedPalmyImpl.deployTransaction.wait();
-    await registerContractInJsonDb(StakedPalmyImpl, stakedPalmyImpl);
+    await registerContractInJsonDb(StakedOasImpl, stakedPalmyImpl);
 
-    console.log(`\tDeploying ${StakedPalmy} Transparent Proxy ...`);
+    console.log(`\tDeploying ${StakedOas} Transparent Proxy ...`);
     const stakedTokenProxy = await deployInitializableAdminUpgradeabilityProxy(
       verify,
       await getEthersSigners()[0]
     );
-    await registerContractInJsonDb(StakedPalmy, stakedTokenProxy);
+    await registerContractInJsonDb(StakedOas, stakedTokenProxy);
 
-    console.log(`\tFinished ${StakedPalmy} proxy and implementation deployment`);
+    console.log(`\tFinished ${StakedOas} proxy and implementation deployment`);
   });

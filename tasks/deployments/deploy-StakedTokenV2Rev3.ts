@@ -25,7 +25,7 @@ task(`deploy-${StakedTokenV2Rev3}`, `Deploys the ${StakedTokenV2Rev3} contract`)
     'vaultAddress',
     'Use IncentivesVault address by param instead of configuration.'
   )
-  .addOptionalParam('tokenAddress', 'Use OalToken address by param instead of configuration.')
+  .addOptionalParam('tokenAddress', 'Use OasToken address by param instead of configuration.')
   .addOptionalParam(
     'emissionManager',
     'EmissionManager address. ref: PullRewardsIncentivesController'

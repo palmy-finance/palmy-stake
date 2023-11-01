@@ -70,14 +70,14 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   it('User1 tries to delegate voting power to ZERO_ADDRESS but delegator should remain', async () => {
     const {
       users: [, , , , , user],
-      plmyToken: plmyToken,
+      woasToken,
       stakedTokenV2,
     } = testEnv;
     const tokenBalance = parseEther('1');
 
     // Stake
     await waitForTx(
-      await plmyToken.connect(user.signer).approve(stakedTokenV2.address, tokenBalance)
+      await woasToken.connect(user.signer).approve(stakedTokenV2.address, tokenBalance)
     );
     await waitForTx(await stakedTokenV2.connect(user.signer).stake(user.address, tokenBalance));
 
@@ -94,7 +94,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   });
 
   it('User 1 stakes 2 Token; checks voting and proposition power of user 2 and 3', async () => {
-    const { users, plmyToken: plmyToken, stakedTokenV2 } = testEnv;
+    const { users, woasToken: plmyToken, stakedTokenV2 } = testEnv;
     const user1 = users[1];
     const user2 = users[2];
     const user3 = users[3];
@@ -142,7 +142,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   });
 
   it('User 2 stakes 2 LEND; checks voting and proposition power of user 2', async () => {
-    const { users, plmyToken: plmyToken, stakedTokenV2 } = testEnv;
+    const { users, woasToken: plmyToken, stakedTokenV2 } = testEnv;
     const user2 = users[2];
 
     const tokenBalance = parseEther('2');
@@ -168,7 +168,7 @@ makeSuite('StakedTokenV2. Power Delegations', (testEnv: TestEnv) => {
   });
 
   it('User 3 migrates 2 LEND; checks voting and proposition power of user 3', async () => {
-    const { users, plmyToken: plmyToken, stakedTokenV2 } = testEnv;
+    const { users, woasToken: plmyToken, stakedTokenV2 } = testEnv;
     const user3 = users[3];
 
     const tokenBalance = parseEther('2');

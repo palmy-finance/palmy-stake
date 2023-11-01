@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 import {ERC20} from '../stake-v1/contracts/open-zeppelin/ERC20.sol';
 
 import {IERC20} from '../interfaces/IERC20.sol';
-import {IStakedPalmy} from '../interfaces/IStakedPalmy.sol';
+import {IStakedOas} from '../interfaces/IStakedOas.sol';
 import {ITransferHook} from '../interfaces/ITransferHook.sol';
 
 import {DistributionTypes} from '../lib/DistributionTypes.sol';
@@ -18,11 +18,11 @@ import {GovernancePowerWithSnapshot} from '../lib/GovernancePowerWithSnapshot.so
 
 /**
  * @title StakedToken V3
- * @notice Contract to stake OAL token, tokenize the position and get rewards, inheriting from a distribution manager contract
+ * @notice Contract to stake WOAS token, tokenize the position and get rewards, inheriting from a distribution manager contract
  * @author Palmy finance
  **/
 contract StakedTokenV3 is
-  IStakedPalmy,
+  IStakedOas,
   GovernancePowerWithSnapshot,
   VersionedInitializable,
   DistributionManager

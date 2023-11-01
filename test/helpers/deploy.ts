@@ -12,9 +12,9 @@ import {
 import {
   deployInitializableAdminUpgradeabilityProxy,
   deployIncentivesController,
-  deployStakedPalmy,
+  deployStakedOas,
   deployMockTransferHook,
-  deployStakedPalmyV2,
+  deployStakedOasV2,
   deployStakedTokenV2Revision3,
   deployStakedTokenV2Revision4,
 } from '../../helpers/contracts-accessors';
@@ -38,18 +38,18 @@ export const testDeployStakedRayV1 = async (
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
   const incentivesControllerProxy = await deployInitializableAdminUpgradeabilityProxy();
-  const StakedPalmyProxy = await deployInitializableAdminUpgradeabilityProxy();
+  const StakedOasProxy = await deployInitializableAdminUpgradeabilityProxy();
 
   const incentivesControllerImplementation = await deployIncentivesController([
     token.address,
     vaultOfRewardsAddress,
-    StakedPalmyProxy.address,
+    StakedOasProxy.address,
     PSM_STAKER_PREMIUM,
     emissionManager,
     (1000 * 60 * 60).toString(),
   ]);
 
-  const StakedPalmyImpl = await deployStakedPalmy([
+  const StakedOasImpl = await deployStakedOas([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -61,21 +61,21 @@ export const testDeployStakedRayV1 = async (
 
   const mockTransferHook = await deployMockTransferHook();
 
-  const StakedPalmyEncodedInitialize = StakedPalmyImpl.interface.encodeFunctionData('initialize', [
+  const StakedOasEncodedInitialize = StakedOasImpl.interface.encodeFunctionData('initialize', [
     mockTransferHook.address,
     STAKED_TOKEN_NAME,
     STAKED_TOKEN_SYMBOL,
     STAKED_TOKEN_DECIMALS,
   ]);
-  await StakedPalmyProxy['initialize(address,address,bytes)'](
-    StakedPalmyImpl.address,
+  await StakedOasProxy['initialize(address,address,bytes)'](
+    StakedOasImpl.address,
     proxyAdmin,
-    StakedPalmyEncodedInitialize
+    StakedOasEncodedInitialize
   );
   await waitForTx(
-    await token.connect(vaultOfRewards).approve(StakedPalmyProxy.address, MAX_UINT_AMOUNT)
+    await token.connect(vaultOfRewards).approve(StakedOasProxy.address, MAX_UINT_AMOUNT)
   );
-  await insertContractAddressInDb(eContractid.StakedPalmy, StakedPalmyProxy.address);
+  await insertContractAddressInDb(eContractid.StakedOas, StakedOasProxy.address);
 
   const peiEncodedInitialize =
     incentivesControllerImplementation.interface.encodeFunctionData('initialize');
@@ -94,7 +94,7 @@ export const testDeployStakedRayV1 = async (
 
   return {
     incentivesControllerProxy,
-    StakedPalmyProxy,
+    StakedOasProxy,
   };
 };
 
@@ -109,14 +109,14 @@ export const testDeployStakedRayV2 = async (
   const emissionManager = await deployer.getAddress();
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const { StakedPalmyProxy } = await testDeployStakedRayV1(
+  const { StakedOasProxy } = await testDeployStakedRayV1(
     token,
     deployer,
     vaultOfRewards,
     restWallets
   );
 
-  const StakedPalmyImpl = await deployStakedTokenV2Revision4([
+  const StakedOasImpl = await deployStakedTokenV2Revision4([
     stakedToken,
     rewardsToken,
     COOLDOWN_SECONDS,
@@ -124,22 +124,22 @@ export const testDeployStakedRayV2 = async (
     vaultOfRewardsAddress,
     emissionManager,
     (1000 * 60 * 60).toString(),
-    'Staked OAL',
-    'sOAL',
+    'Staked OAS',
+    'sOAS',
     '18',
     ZERO_ADDRESS,
   ]);
 
-  const StakedPalmyEncodedInitialize = StakedPalmyImpl.interface.encodeFunctionData('initialize');
+  const StakedOasEncodedInitialize = StakedOasImpl.interface.encodeFunctionData('initialize');
 
-  await StakedPalmyProxy.connect(restWallets[0]).upgradeToAndCall(
-    StakedPalmyImpl.address,
-    StakedPalmyEncodedInitialize
+  await StakedOasProxy.connect(restWallets[0]).upgradeToAndCall(
+    StakedOasImpl.address,
+    StakedOasEncodedInitialize
   );
 
-  await insertContractAddressInDb(eContractid.StakedPalmyV2, StakedPalmyProxy.address);
+  await insertContractAddressInDb(eContractid.StakedOasV2, StakedOasProxy.address);
 
   return {
-    StakedPalmyProxy,
+    StakedOasProxy,
   };
 };

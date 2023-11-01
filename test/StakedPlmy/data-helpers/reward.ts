@@ -5,7 +5,7 @@ const { expect, assert } = chai;
 
 import { ethers, ContractTransaction, BigNumberish } from 'ethers';
 
-import { StakedPalmy } from '../../../types/StakedPalmy';
+import { StakedOas } from '../../../types/StakedOas';
 
 import { getRewards } from '../../DistributionManager/data-helpers/base-math';
 import { getUserIndex } from '../../DistributionManager/data-helpers/asset-user-data';
@@ -22,18 +22,18 @@ type AssetConfig = {
 };
 
 export const compareRewardsAtAction = async (
-  StakedPalmy: StakedPalmy,
+  StakedOas: StakedOas,
   userAddress: string,
   actions: () => Promise<ContractTransaction>[],
   shouldReward?: boolean,
   assetConfig?: AssetConfig
 ): Promise<void> => {
-  const underlyingAsset = StakedPalmy.address;
+  const underlyingAsset = StakedOas.address;
   // To prevent coverage to fail, add 5 seconds per comparisson.
   await increaseTime(5);
 
   const rewardsBalanceBefore = BigNumber.from(
-    await (await StakedPalmy.getTotalRewardsBalance(userAddress)).toString()
+    await (await StakedOas.getTotalRewardsBalance(userAddress)).toString()
   );
 
   // Configure assets of stake token
@@ -44,25 +44,25 @@ export const compareRewardsAtAction = async (
       }
     : {
         emissionPerSecond: '100',
-        totalStaked: await StakedPalmy.totalSupply(),
+        totalStaked: await StakedOas.totalSupply(),
         underlyingAsset,
       };
-  await StakedPalmy.configureAssets([assetConfiguration]);
+  await StakedOas.configureAssets([assetConfiguration]);
 
-  const userBalance = await StakedPalmy.balanceOf(userAddress);
+  const userBalance = await StakedOas.balanceOf(userAddress);
   // Get index before actions
-  const userIndexBefore = await getUserIndex(StakedPalmy, userAddress, underlyingAsset);
+  const userIndexBefore = await getUserIndex(StakedOas, userAddress, underlyingAsset);
 
   // Dispatch actions that can or not update the user index
   const receipts: ethers.ContractReceipt[] = await Promise.all(
     await actions().map(async (action) => waitForTx(await action))
   );
   // Get index after actions
-  const userIndexAfter = await getUserIndex(StakedPalmy, userAddress, underlyingAsset);
+  const userIndexAfter = await getUserIndex(StakedOas, userAddress, underlyingAsset);
 
   // Compare calculated JS rewards versus Solidity user rewards
   const rewardsBalanceAfter = BigNumber.from(
-    await (await StakedPalmy.getTotalRewardsBalance(userAddress)).toString()
+    await (await StakedOas.getTotalRewardsBalance(userAddress)).toString()
   );
   const expectedAccruedRewards = getRewards(userBalance, userIndexAfter, userIndexBefore);
   expect(rewardsBalanceAfter).to.eq(rewardsBalanceBefore.add(expectedAccruedRewards));
@@ -91,7 +91,7 @@ export const compareRewardsAtAction = async (
 };
 
 export const compareRewardsAtTransfer = async (
-  StakedPalmy: StakedPalmy,
+  StakedOas: StakedOas,
   from: SignerWithAddress,
   to: SignerWithAddress,
   amount: BigNumberish,
@@ -104,41 +104,41 @@ export const compareRewardsAtTransfer = async (
 
   const fromAddress = from.address;
   const toAddress = to.address;
-  const underlyingAsset = StakedPalmy.address;
-  const fromSavedBalance = await StakedPalmy.balanceOf(fromAddress);
-  const toSavedBalance = await StakedPalmy.balanceOf(toAddress);
+  const underlyingAsset = StakedOas.address;
+  const fromSavedBalance = await StakedOas.balanceOf(fromAddress);
+  const toSavedBalance = await StakedOas.balanceOf(toAddress);
   const fromSavedRewards = BigNumber.from(
-    await (await StakedPalmy.getTotalRewardsBalance(fromAddress)).toString()
+    await (await StakedOas.getTotalRewardsBalance(fromAddress)).toString()
   );
   const toSavedRewards = BigNumber.from(
-    await (await StakedPalmy.getTotalRewardsBalance(toAddress)).toString()
+    await (await StakedOas.getTotalRewardsBalance(toAddress)).toString()
   );
   // Get index before actions
-  const fromIndexBefore = await getUserIndex(StakedPalmy, fromAddress, underlyingAsset);
-  const toIndexBefore = await getUserIndex(StakedPalmy, toAddress, underlyingAsset);
+  const fromIndexBefore = await getUserIndex(StakedOas, fromAddress, underlyingAsset);
+  const toIndexBefore = await getUserIndex(StakedOas, toAddress, underlyingAsset);
 
   // Load actions that can or not update the user index
-  const actions = () => [StakedPalmy.connect(from.signer).transfer(toAddress, amount)];
+  const actions = () => [StakedOas.connect(from.signer).transfer(toAddress, amount)];
 
   // Fire reward comparator
-  await compareRewardsAtAction(StakedPalmy, fromAddress, actions, fromShouldReward, assetConfig);
+  await compareRewardsAtAction(StakedOas, fromAddress, actions, fromShouldReward, assetConfig);
 
   // Check rewards after transfer
 
   // Get index after actions
-  const fromIndexAfter = await getUserIndex(StakedPalmy, fromAddress, underlyingAsset);
-  const toIndexAfter = await getUserIndex(StakedPalmy, toAddress, underlyingAsset);
+  const fromIndexAfter = await getUserIndex(StakedOas, fromAddress, underlyingAsset);
+  const toIndexAfter = await getUserIndex(StakedOas, toAddress, underlyingAsset);
 
   // FROM: Compare calculated JS rewards versus Solidity user rewards
   const fromRewardsBalanceAfter = BigNumber.from(
-    await (await StakedPalmy.getTotalRewardsBalance(fromAddress)).toString()
+    await (await StakedOas.getTotalRewardsBalance(fromAddress)).toString()
   );
   const fromExpectedAccruedRewards = getRewards(fromSavedBalance, fromIndexAfter, fromIndexBefore);
   expect(fromRewardsBalanceAfter).to.eq(fromSavedRewards.add(fromExpectedAccruedRewards));
 
   // TO: Compare calculated JS rewards versus Solidity user rewards
   const toRewardsBalanceAfter = BigNumber.from(
-    await (await StakedPalmy.getTotalRewardsBalance(toAddress)).toString()
+    await (await StakedOas.getTotalRewardsBalance(toAddress)).toString()
   );
   const toExpectedAccruedRewards = getRewards(toSavedBalance, toIndexAfter, toIndexBefore);
   expect(toRewardsBalanceAfter).to.eq(toSavedRewards.add(toExpectedAccruedRewards));
@@ -161,8 +161,8 @@ export const compareRewardsAtTransfer = async (
   if (fromAddress === toAddress) {
     expect(fromSavedBalance.toString()).to.be.equal(toSavedBalance.toString());
   } else {
-    const fromNewBalance = await (await StakedPalmy.balanceOf(fromAddress)).toString();
-    const toNewBalance = await (await StakedPalmy.balanceOf(toAddress)).toString();
+    const fromNewBalance = await (await StakedOas.balanceOf(fromAddress)).toString();
+    const toNewBalance = await (await StakedOas.balanceOf(toAddress)).toString();
     expect(fromNewBalance).to.be.equal(fromSavedBalance.sub(amount).toString());
     expect(toNewBalance).to.be.equal(toSavedBalance.add(amount).toString());
   }

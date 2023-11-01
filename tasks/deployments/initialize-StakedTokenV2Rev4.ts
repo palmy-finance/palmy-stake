@@ -2,7 +2,7 @@ import { task } from 'hardhat/config';
 import { eContractid } from '../../helpers/types';
 import { notFalsyOrZeroAddress, waitForTx } from '../../helpers/misc-utils';
 import {
-  getStakedPalmyProxy,
+  getStakedOasProxy,
   getStakedTokenV2Rev3,
   getStakedTokenV2Rev4,
 } from '../../helpers/contracts-accessors';
@@ -21,24 +21,24 @@ task(
 
   console.log(`\n- ${StakedTokenV2Rev4} initialization`);
 
-  const StakedPalmyImpl = await getStakedTokenV2Rev4();
-  const StakedPalmyProxy = await getStakedPalmyProxy();
+  const StakedOasImpl = await getStakedTokenV2Rev4();
+  const StakedOasProxy = await getStakedOasProxy();
 
-  if (!notFalsyOrZeroAddress(StakedPalmyImpl.address)) {
-    throw new Error('missing StakedPalmyImpl');
+  if (!notFalsyOrZeroAddress(StakedOasImpl.address)) {
+    throw new Error('missing StakedOasImpl');
   }
-  if (!notFalsyOrZeroAddress(StakedPalmyProxy.address)) {
-    throw new Error('missing StakedPalmyProxy');
+  if (!notFalsyOrZeroAddress(StakedOasProxy.address)) {
+    throw new Error('missing StakedOasProxy');
   }
 
   console.log('\tInitializing StakedTokenV2Rev3');
 
-  console.log(`\tStakedTokenV2Rev3 Implementation address: ${StakedPalmyImpl.address}`);
+  console.log(`\tStakedTokenV2Rev3 Implementation address: ${StakedOasImpl.address}`);
 
-  const encodedInitializeStakedPalmy = StakedPalmyImpl.interface.encodeFunctionData('initialize');
+  const encodedInitializeStakedOas = StakedOasImpl.interface.encodeFunctionData('initialize');
   console.log('upgrade');
   await waitForTx(
-    await StakedPalmyProxy.upgradeToAndCall(StakedPalmyImpl.address, encodedInitializeStakedPalmy)
+    await StakedOasProxy.upgradeToAndCall(StakedOasImpl.address, encodedInitializeStakedOas)
   );
 
   console.log('\tFinished StakedTokenV2Rev3 and Transparent Proxy initialization');

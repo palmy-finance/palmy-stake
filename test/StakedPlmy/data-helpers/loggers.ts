@@ -1,15 +1,12 @@
 import { tEthereumAddress } from '../../../helpers/types';
 import { MintableErc20 } from '../../../types/MintableErc20';
-import { StakedPalmy } from '../../../types/StakedPalmy';
+import { StakedOas } from '../../../types/StakedOas';
 
 export const logLayTokenBalanceOf = async (account: tEthereumAddress, token: MintableErc20) => {
   console.log(`[token.balanceOf(${account})]: ${(await token.balanceOf(account)).toString()}`);
 };
 
-export const logStakedTokenBalanceOf = async (
-  staker: tEthereumAddress,
-  stakedToken: StakedPalmy
-) => {
+export const logStakedTokenBalanceOf = async (staker: tEthereumAddress, stakedToken: StakedOas) => {
   console.log(
     `[stakedToken.balanceOf(${staker})]: ${(await stakedToken.balanceOf(staker)).toString()}`
   );
@@ -17,11 +14,11 @@ export const logStakedTokenBalanceOf = async (
 
 export const logGetStakeTotalRewardsBalance = async (
   staker: tEthereumAddress,
-  StakedPalmy: StakedPalmy
+  StakedOas: StakedOas
 ) => {
   console.log(
-    `[StakedPalmy.getTotalRewardsBalance(${staker})]: ${(
-      await StakedPalmy.getTotalRewardsBalance(staker)
+    `[StakedOas.getTotalRewardsBalance(${staker})]: ${(
+      await StakedOas.getTotalRewardsBalance(staker)
     ).toString()}`
   );
 };
