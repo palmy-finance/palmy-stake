@@ -9,10 +9,9 @@ export enum eEthereumNetwork {
   tenderly = 'tenderly',
 }
 
-export enum eAstarNetwork {
-  astar = 'astar',
-  shiden = 'shiden',
-  shibuya = 'shibuya',
+export enum eOasysNetwork {
+  oasys = 'oasys',
+  testnet = 'testnet',
 }
 
 export enum eContractid {
@@ -55,7 +54,7 @@ export interface iParamsPerNetwork<T> {
   [eEthereumNetwork.kovan]: T;
   [eEthereumNetwork.rinkeby]: T;
   [eEthereumNetwork.main]: T;
-  [eAstarNetwork.astar]: T;
-  [eAstarNetwork.shiden]: T;
-  [eAstarNetwork.shibuya]: T;
+  [eOasysNetwork.astar]: T;
+  [eOasysNetwork.shiden]: T;
+  [eOasysNetwork.shibuya]: T;
 }

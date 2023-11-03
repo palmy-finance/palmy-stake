@@ -5,7 +5,10 @@ import { initializeMakeSuite } from './helpers/make-suite';
 import { deployMintableErc20, deployATokenMock } from '../helpers/contracts-accessors';
 import { waitForTx } from '../helpers/misc-utils';
 import { MintableErc20 } from '../types/MintableErc20';
-import { testDeployStakedRayV2, testDeployStakedRayV1 } from './helpers/deploy';
+import {
+  testDeployStakedOasV2 as testDeployStakedOasV2,
+  testDeployStakedOasV1 as testDeployStakedOasV1,
+} from './helpers/deploy';
 import { parseEther } from 'ethers/lib/utils';
 
 const topUpWalletsWithOas = async (wallets: Signer[], woasToken: MintableErc20, amount: string) => {
@@ -33,9 +36,9 @@ const buildTestEnv = async (deployer: Signer, vaultOfRewards: Signer, restWallet
     ethers.utils.parseEther('100').toString()
   );
 
-  await testDeployStakedRayV2(woasToken, deployer, vaultOfRewards, restWallets);
+  await testDeployStakedOasV2(woasToken, deployer, vaultOfRewards, restWallets);
 
-  const { incentivesControllerProxy } = await testDeployStakedRayV1(
+  const { incentivesControllerProxy } = await testDeployStakedOasV1(
     woasToken,
     deployer,
     vaultOfRewards,

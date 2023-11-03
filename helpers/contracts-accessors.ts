@@ -24,35 +24,16 @@ import { Signer } from 'ethers';
 import { StakedTokenBptRev2, StakedTokenV2Rev3 } from '../types';
 
 export const deployStakedOas = async (
-  [
-    stakedToken,
-    rewardsToken,
-    cooldownSeconds,
-    unstakeWindow,
-    rewardsVault,
-    emissionManager,
-    distributionDuration,
-  ]: [
-    tEthereumAddress,
-    tEthereumAddress,
+  [cooldownSeconds, unstakeWindow, emissionManager, distributionDuration]: [
     string,
     string,
-    tEthereumAddress,
     tEthereumAddress,
     string
   ],
   verify?: boolean
 ) => {
   const id = eContractid.StakedOas;
-  const args: string[] = [
-    stakedToken,
-    rewardsToken,
-    cooldownSeconds,
-    unstakeWindow,
-    rewardsVault,
-    emissionManager,
-    distributionDuration,
-  ];
+  const args: string[] = [cooldownSeconds, unstakeWindow, emissionManager, distributionDuration];
   const instance = await deployContract<StakedOas>(id, args);
   if (verify) {
     await verifyContract(instance.address, args);

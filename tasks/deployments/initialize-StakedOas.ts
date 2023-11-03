@@ -1,11 +1,13 @@
 import { task } from 'hardhat/config';
-import { eContractid } from '../../helpers/types';
+import { eOasysNetwork, eContractid, eEthereumNetwork } from '../../helpers/types';
 import { waitForTx } from '../../helpers/misc-utils';
 import {
   ZERO_ADDRESS,
   STAKED_TOKEN_NAME,
   STAKED_TOKEN_SYMBOL,
   STAKED_TOKEN_DECIMALS,
+  getTokenPerNetwork,
+  getIncentivesVaultPerNetwork,
 } from '../../helpers/constants';
 import { getStakedOasImpl, getStakedOasProxy } from '../../helpers/contracts-accessors';
 
@@ -13,7 +15,12 @@ const { StakedOas: StakedOas } = eContractid;
 
 task(`initialize-${StakedOas}`, `Initialize the ${StakedOas} proxy contract`)
   .addParam('admin', `The address to be added as an Admin role in ${StakedOas} Transparent Proxy.`)
-  .setAction(async ({ admin: plmyAdmin }, localBRE) => {
+  .addOptionalParam(
+    'vaultAddress',
+    'Use IncentivesVault address by param instead of configuration.'
+  )
+  .addOptionalParam('tokenAddress', 'Use WOasToken address by param instead of configuration.')
+  .setAction(async ({ admin: plmyAdmin, vaultAddress, tokenAddress }, localBRE) => {
     await localBRE.run('set-dre');
 
     if (!plmyAdmin) {
@@ -32,12 +39,13 @@ task(`initialize-${StakedOas}`, `Initialize the ${StakedOas} proxy contract`)
     const StakedOasProxy = await getStakedOasProxy();
 
     console.log('\tInitializing StakedOas');
+    const network = localBRE.network.name as eEthereumNetwork | eOasysNetwork;
 
     const encodedInitializeStakedOas = StakedOasImpl.interface.encodeFunctionData('initialize', [
       ZERO_ADDRESS,
-      STAKED_TOKEN_NAME,
-      STAKED_TOKEN_SYMBOL,
-      STAKED_TOKEN_DECIMALS,
+      tokenAddress || getTokenPerNetwork(network),
+      tokenAddress || getTokenPerNetwork(network),
+      vaultAddress || getIncentivesVaultPerNetwork(network),
     ]);
 
     await waitForTx(

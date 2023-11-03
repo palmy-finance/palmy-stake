@@ -1,6 +1,6 @@
 import { task } from 'hardhat/config';
 
-import { eAstarNetwork, eContractid, eEthereumNetwork } from '../../helpers/types';
+import { eOasysNetwork, eContractid, eEthereumNetwork } from '../../helpers/types';
 import { getEthersSigners, registerContractInJsonDb } from '../../helpers/contracts-helpers';
 import {
   getTokenPerNetwork,
@@ -21,11 +21,6 @@ const { StakedOas, StakedOasImpl } = eContractid;
 
 task(`deploy-${StakedOas}`, `Deploys the ${StakedOas} contract`)
   .addFlag('verify', 'Verify StakedToken contract via Etherscan API.')
-  .addOptionalParam(
-    'vaultAddress',
-    'Use IncentivesVault address by param instead of configuration.'
-  )
-  .addOptionalParam('tokenAddress', 'Use OasToken address by param instead of configuration.')
   .setAction(async ({ verify, vaultAddress, tokenAddress }, localBRE) => {
     await localBRE.run('set-dre');
 
@@ -38,7 +33,7 @@ task(`deploy-${StakedOas}`, `Deploys the ${StakedOas} contract`)
       throw new Error('INVALID_CHAIN_ID');
     }
 
-    const network = localBRE.network.name as eEthereumNetwork | eAstarNetwork;
+    const network = localBRE.network.name as eEthereumNetwork | eOasysNetwork;
 
     console.log(`\n- ${StakedOas} deployment`);
 
@@ -46,11 +41,8 @@ task(`deploy-${StakedOas}`, `Deploys the ${StakedOas} contract`)
     const admin = getAdminPerNetwork(network);
     const stakedPalmyImpl = await deployStakedOas(
       [
-        tokenAddress || getTokenPerNetwork(network),
-        tokenAddress || getTokenPerNetwork(network),
         getCooldownSecondsPerNetwork(network),
         getUnstakeWindowPerNetwork(network),
-        vaultAddress || getIncentivesVaultPerNetwork(network),
         '0xed81c007113D8E532954B735B683260776F3c297', // admin, // emissionManager
         getDistributionDurationPerNetwork(network),
       ],
