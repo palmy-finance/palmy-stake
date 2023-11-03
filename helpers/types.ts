@@ -54,7 +54,6 @@ export interface iParamsPerNetwork<T> {
   [eEthereumNetwork.kovan]: T;
   [eEthereumNetwork.rinkeby]: T;
   [eEthereumNetwork.main]: T;
-  [eOasysNetwork.astar]: T;
-  [eOasysNetwork.shiden]: T;
-  [eOasysNetwork.shibuya]: T;
+  [eOasysNetwork.oasys]: T;
+  [eOasysNetwork.testnet]: T;
 }
