@@ -1,4 +1,4 @@
-import { eAstarNetwork, eEthereumNetwork } from './helpers/types';
+import { eOasysNetwork, eEthereumNetwork } from './helpers/types';
 // @ts-ignore
 import { accounts } from './test-wallets';
 import path from 'path';
@@ -59,7 +59,7 @@ const defaultNetworkConfig = {
     initialIndex: 0,
     count: 20,
   },
-}
+};
 
 const getCommonNetworkConfig = (networkName: eEthereumNetwork, networkId: number) => {
   return {
@@ -73,12 +73,14 @@ const getCommonNetworkConfig = (networkName: eEthereumNetwork, networkId: number
   };
 };
 
-const getAstarNetworkConfig = (networkName: eAstarNetwork, networkId: number) => {
+const getOasysNetworkConfig = (networkName: eOasysNetwork, networkId: number) => {
   return {
     ...defaultNetworkConfig,
     url: BWARE_LABS_KEY
       ? `https://${networkName}-api.bwarelabs.com/${BWARE_LABS_KEY}`
-      : `https://rpc.${networkName === eAstarNetwork.astar ? `astar` : `${networkName}.astar`}.network:8545`,
+      : `https://rpc.${
+          networkName === eOasysNetwork.oasys ? `oasys` : `${networkName}.testnet`
+        }.network:8545`,
     chainId: networkId,
   };
 };
@@ -122,9 +124,8 @@ const config: HardhatUserConfig = {
     kovan: getCommonNetworkConfig(eEthereumNetwork.kovan, 42),
     rinkeby: getCommonNetworkConfig(eEthereumNetwork.rinkeby, 4),
     main: getCommonNetworkConfig(eEthereumNetwork.main, 1),
-    astar: getAstarNetworkConfig(eAstarNetwork.astar, 592),
-    shiden: getAstarNetworkConfig(eAstarNetwork.shiden, 336),
-    shibuya: getAstarNetworkConfig(eAstarNetwork.shibuya, 81),
+    oasys: getOasysNetworkConfig(eOasysNetwork.oasys, 248),
+    testnet: getOasysNetworkConfig(eOasysNetwork.testnet, 9372),
     hardhat: {
       hardfork: 'istanbul',
       blockGasLimit: DEFAULT_BLOCK_GAS_LIMIT,

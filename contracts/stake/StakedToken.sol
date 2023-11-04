@@ -17,21 +17,26 @@ import {SafeMath} from '../lib/SafeMath.sol';
  * @notice Contract to stake WOAS token, tokenize the position and get rewards, inheriting from a distribution manager contract
  * @author Palmy finance
  **/
-contract StakedToken is IStakedOas, ERC20WithSnapshot, VersionedInitializable, DistributionManager {
+abstract contract StakedToken is
+  IStakedOas,
+  ERC20WithSnapshot,
+  VersionedInitializable,
+  DistributionManager
+{
   using SafeMath for uint256;
   using SafeERC20 for IERC20;
 
   uint256 public constant REVISION = 1;
 
-  IERC20 public immutable STAKED_TOKEN;
-  IERC20 public immutable REWARD_TOKEN;
+  IERC20 public STAKED_TOKEN;
+  IERC20 public REWARD_TOKEN;
   uint256 public immutable COOLDOWN_SECONDS;
 
   /// @notice Seconds available to redeem once the cooldown period is fullfilled
   uint256 public immutable UNSTAKE_WINDOW;
 
   /// @notice Address to pull from the rewards, needs to have approved this contract
-  address public immutable REWARDS_VAULT;
+  address public REWARDS_VAULT;
 
   mapping(address => uint256) public stakerRewardsToClaim;
   mapping(address => uint256) public stakersCooldowns;
@@ -45,45 +50,44 @@ contract StakedToken is IStakedOas, ERC20WithSnapshot, VersionedInitializable, D
   event Cooldown(address indexed user);
 
   constructor(
-    address stakedToken,
-    address rewardToken,
     uint256 cooldownSeconds,
     uint256 unstakeWindow,
-    address rewardsVault,
     address emissionManager,
     uint128 distributionDuration,
     string memory name,
     string memory symbol,
     uint8 decimals
   )
-    public
     ERC20WithSnapshot(name, symbol, decimals)
     DistributionManager(emissionManager, distributionDuration)
   {
-    require(stakedToken != address(0), 'Cannot set the stakedToken to the zero address');
-    require(rewardToken != address(0), 'Cannot set the rewardToken to the zero address');
-    require(rewardsVault != address(0), 'Cannot set the rewardsVault to the zero address');
     require(emissionManager != address(0), 'Cannot set the emissionManager to the zero address');
-    STAKED_TOKEN = IERC20(stakedToken);
-    REWARD_TOKEN = IERC20(rewardToken);
     COOLDOWN_SECONDS = cooldownSeconds;
     UNSTAKE_WINDOW = unstakeWindow;
-    REWARDS_VAULT = rewardsVault;
   }
 
   /**
    * @dev Called by the proxy contract
    **/
-  function initialize(
+  function _initialize(
     ITransferHook governance,
-    string calldata name,
-    string calldata symbol,
-    uint8 decimals
-  ) external initializer {
+    string memory name,
+    string memory symbol,
+    uint8 decimals,
+    address stakedToken,
+    address rewardToken,
+    address rewardsVault
+  ) internal {
+    require(stakedToken != address(0), 'Cannot set the stakedToken to the zero address');
+    require(rewardToken != address(0), 'Cannot set the rewardToken to the zero address');
+    require(rewardsVault != address(0), 'Cannot set the rewardsVault to the zero address');
     _setName(name);
     _setSymbol(symbol);
     _setDecimals(decimals);
     _setGovernance(governance);
+    STAKED_TOKEN = IERC20(stakedToken);
+    REWARD_TOKEN = IERC20(rewardToken);
+    REWARDS_VAULT = rewardsVault;
   }
 
   function stake(address onBehalfOf, uint256 amount) external override {

@@ -1,11 +1,11 @@
 import { task } from 'hardhat/config';
 import { DRE, getDb } from '../../helpers/misc-utils';
-import { eAstarNetwork, eContractid } from '../../helpers/types';
+import { eOasysNetwork, eContractid } from '../../helpers/types';
 import { StakedTokenV2Rev3__factory } from '../../types';
 
 task('print-configs', 'print configuration about staked token').setAction(async ({}, localBRE) => {
   await localBRE.run('set-dre');
-  const network = localBRE.network.name as eAstarNetwork;
+  const network = localBRE.network.name as eOasysNetwork;
   const signers = await DRE.ethers.getSigners();
   const account = signers[0]; // if emissionManager, change this index of signers array
   const contractId = eContractid.StakedOas;

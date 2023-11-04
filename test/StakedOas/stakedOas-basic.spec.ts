@@ -8,6 +8,7 @@ import {
   STAKED_TOKEN_SYMBOL,
   STAKED_TOKEN_DECIMALS,
   ZERO_ADDRESS,
+  RANDOM_ADDRESSES,
 } from '../../helpers/constants';
 import { waitForTx, timeLatest, advanceBlock, increaseTimeAndMine } from '../../helpers/misc-utils';
 import { ethers } from 'ethers';
@@ -34,50 +35,19 @@ makeSuite('StakedToken. Basics', (testEnv: TestEnv) => {
   });
   it('Reverts trying to constract with zero_address', async () => {
     const { stakedToken, woasToken, rewardsVault } = testEnv;
+    await expect(deployStakedOas(['100', '100', ZERO_ADDRESS, '100'])).to.be.revertedWith(
+      'Cannot set the emissionManager to the zero address'
+    );
+    const stakedOas = await deployStakedOas(['100', '100', RANDOM_ADDRESSES[0], '100']);
     await expect(
-      deployStakedOas([
-        ZERO_ADDRESS,
-        woasToken.address,
-        '100',
-        '100',
-        rewardsVault.address,
-        woasToken.address,
-        '100',
-      ])
+      stakedOas.initialize(ZERO_ADDRESS, ZERO_ADDRESS, woasToken.address, rewardsVault.address)
     ).to.be.revertedWith('Cannot set the stakedToken to the zero address');
     await expect(
-      deployStakedOas([
-        stakedToken.address,
-        ZERO_ADDRESS,
-        '100',
-        '100',
-        rewardsVault.address,
-        woasToken.address,
-        '100',
-      ])
+      stakedOas.initialize(ZERO_ADDRESS, stakedToken.address, ZERO_ADDRESS, rewardsVault.address)
     ).to.be.revertedWith('Cannot set the rewardToken to the zero address');
     await expect(
-      deployStakedOas([
-        stakedToken.address,
-        stakedToken.address,
-        '100',
-        '100',
-        ZERO_ADDRESS,
-        woasToken.address,
-        '100',
-      ])
+      stakedOas.initialize(ZERO_ADDRESS, stakedToken.address, woasToken.address, ZERO_ADDRESS)
     ).to.be.revertedWith('Cannot set the rewardsVault to the zero address');
-    await expect(
-      deployStakedOas([
-        stakedToken.address,
-        stakedToken.address,
-        '100',
-        '100',
-        woasToken.address,
-        ZERO_ADDRESS,
-        '100',
-      ])
-    ).to.be.revertedWith('Cannot set the emissionManager to the zero address');
   });
   it('Reverts trying to stake 0 amount', async () => {
     const {

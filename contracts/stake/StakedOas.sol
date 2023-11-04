@@ -4,6 +4,7 @@ pragma experimental ABIEncoderV2;
 
 import {IERC20} from '../interfaces/IERC20.sol';
 import {StakedToken} from './StakedToken.sol';
+import {ITransferHook} from '../interfaces/ITransferHook.sol';
 
 /**
  * @title StakedOas
@@ -16,21 +17,15 @@ contract StakedOas is StakedToken {
   uint8 internal constant DECIMALS = 18;
 
   constructor(
-    address stakedToken,
-    address rewardToken,
     uint256 cooldownSeconds,
     uint256 unstakeWindow,
-    address rewardsVault,
     address emissionManager,
     uint128 distributionDuration
   )
     public
     StakedToken(
-      stakedToken,
-      rewardToken,
       cooldownSeconds,
       unstakeWindow,
-      rewardsVault,
       emissionManager,
       distributionDuration,
       NAME,
@@ -38,4 +33,13 @@ contract StakedOas is StakedToken {
       DECIMALS
     )
   {}
+
+  function initialize(
+    ITransferHook governance,
+    address stakedToken,
+    address rewardToken,
+    address rewardsVault
+  ) external initializer {
+    _initialize(governance, NAME, SYMBOL, DECIMALS, stakedToken, rewardToken, rewardsVault);
+  }
 }

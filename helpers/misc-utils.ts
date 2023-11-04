@@ -4,7 +4,7 @@ import FileSync from 'lowdb/adapters/FileSync';
 import { WAD } from './constants';
 import { Wallet, ContractTransaction } from 'ethers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { iParamsPerNetwork, eEthereumNetwork, tEthereumAddress, eAstarNetwork } from './types';
+import { iParamsPerNetwork, eEthereumNetwork, tEthereumAddress, eOasysNetwork } from './types';
 import { getCurrentBlock } from './contracts-helpers';
 import { time } from 'console';
 import { isAddress } from 'ethers/lib/utils';
@@ -23,8 +23,8 @@ export const setDRE = (_DRE: HardhatRuntimeEnvironment) => {
 };
 
 export const getParamPerNetwork = <T>(
-  { kovan, rinkeby, main, hardhat, astar, shiden, shibuya }: iParamsPerNetwork<T>,
-  network: eEthereumNetwork | eAstarNetwork
+  { kovan, rinkeby, main, hardhat, oasys, testnet }: iParamsPerNetwork<T>,
+  network: eEthereumNetwork | eOasysNetwork
 ) => {
   switch (network) {
     case eEthereumNetwork.hardhat:
@@ -35,12 +35,10 @@ export const getParamPerNetwork = <T>(
       return rinkeby;
     case eEthereumNetwork.main:
       return main;
-    case eAstarNetwork.astar:
-      return astar;
-    case eAstarNetwork.shiden:
-      return shiden;
-    case eAstarNetwork.shibuya:
-      return shibuya;
+    case eOasysNetwork.oasys:
+      return oasys;
+    case eOasysNetwork.testnet:
+      return testnet;
     default:
       return main;
   }

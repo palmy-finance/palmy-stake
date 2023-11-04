@@ -23,7 +23,7 @@ import { waitForTx } from '../../helpers/misc-utils';
 import { eContractid } from '../../helpers/types';
 import { MintableErc20 } from '../../types/MintableErc20';
 
-export const testDeployStakedRayV1 = async (
+export const testDeployStakedOasV1 = async (
   token: MintableErc20,
   deployer: Signer,
   vaultOfRewards: Signer,
@@ -50,11 +50,8 @@ export const testDeployStakedRayV1 = async (
   ]);
 
   const StakedOasImpl = await deployStakedOas([
-    stakedToken,
-    rewardsToken,
     COOLDOWN_SECONDS,
     UNSTAKE_WINDOW,
-    vaultOfRewardsAddress,
     emissionManager,
     (1000 * 60 * 60).toString(),
   ]);
@@ -63,9 +60,9 @@ export const testDeployStakedRayV1 = async (
 
   const StakedOasEncodedInitialize = StakedOasImpl.interface.encodeFunctionData('initialize', [
     mockTransferHook.address,
-    STAKED_TOKEN_NAME,
-    STAKED_TOKEN_SYMBOL,
-    STAKED_TOKEN_DECIMALS,
+    stakedToken,
+    rewardsToken,
+    vaultOfRewardsAddress,
   ]);
   await StakedOasProxy['initialize(address,address,bytes)'](
     StakedOasImpl.address,
@@ -98,7 +95,7 @@ export const testDeployStakedRayV1 = async (
   };
 };
 
-export const testDeployStakedRayV2 = async (
+export const testDeployStakedOasV2 = async (
   token: MintableErc20,
   deployer: Signer,
   vaultOfRewards: Signer,
@@ -109,7 +106,7 @@ export const testDeployStakedRayV2 = async (
   const emissionManager = await deployer.getAddress();
   const vaultOfRewardsAddress = await vaultOfRewards.getAddress();
 
-  const { StakedOasProxy } = await testDeployStakedRayV1(
+  const { StakedOasProxy } = await testDeployStakedOasV1(
     token,
     deployer,
     vaultOfRewards,
