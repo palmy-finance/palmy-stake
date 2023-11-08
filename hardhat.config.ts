@@ -10,6 +10,7 @@ import 'solidity-coverage';
 import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-etherscan';
 import '@tenderly/hardhat-tenderly';
+require('dotenv').config();
 
 export const BUIDLEREVM_CHAIN_ID = 31337;
 
@@ -25,7 +26,6 @@ const BWARE_LABS_KEY = process.env.BWARE_LABS_KEY || '';
 const SKIP_LOAD = process.env.SKIP_LOAD === 'true';
 const MAINNET_FORK = process.env.MAINNET_FORK === 'true';
 const FORKING_BLOCK = parseInt(process.env.FORKING_BLOCK || '12369243');
-
 // Prevent to load scripts before compilation and typechain
 if (!SKIP_LOAD) {
   ['misc', 'migrations', 'deployments'].forEach((folder) => {
@@ -76,11 +76,10 @@ const getCommonNetworkConfig = (networkName: eEthereumNetwork, networkId: number
 const getOasysNetworkConfig = (networkName: eOasysNetwork, networkId: number) => {
   return {
     ...defaultNetworkConfig,
-    url: BWARE_LABS_KEY
-      ? `https://${networkName}-api.bwarelabs.com/${BWARE_LABS_KEY}`
-      : `https://rpc.${
-          networkName === eOasysNetwork.oasys ? `oasys` : `${networkName}.testnet`
-        }.network:8545`,
+    url:
+      networkName === 'oasys'
+        ? `https://rpc.mainnet.oasys.games`
+        : 'https://rpc.testnet.oasys.games',
     chainId: networkId,
   };
 };
@@ -108,7 +107,28 @@ const config: HardhatUserConfig = {
     outDir: 'types',
   },
   etherscan: {
-    apiKey: ETHERSCAN_KEY,
+    apiKey: {
+      testnet: 'N/A',
+      oasys: 'N/A',
+    },
+    customChains: [
+      {
+        chainId: 9372,
+        network: 'testnet',
+        urls: {
+          apiURL: 'https://explorer.testnet.oasys.games/api',
+          browserURL: 'https://explorer.testnet.oasys.games',
+        },
+      },
+      {
+        chainId: 248,
+        network: 'oasys',
+        urls: {
+          apiURL: 'https://explorer.oasys.games/api',
+          browserURL: 'https://explorer.oasys.games',
+        },
+      },
+    ],
   },
   defaultNetwork: 'hardhat',
   mocha: {

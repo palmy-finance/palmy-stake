@@ -15,16 +15,12 @@ export const STAKED_TOKEN_DECIMALS = 18;
 
 export const GOVERNANCE_V2 = '0xEC568fffba86c094cf06b22134B23074DFE2252c';
 export const UPGRADABLE_CRP_FACTORY = '0x1156C30b08DbF16281c803EAe0d52Eee7652f10C';
-export const WOAS_TOKEN = '0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9';
-export const WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
-export const REWARDS_VAULT = '0x25f2226b597e8f9514b3f68f00f494cf4f286491';
+export const WOAS_TOKEN = '0x5200000000000000000000000000000000000001';
 export const BPOOL_FACTORY = '0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd';
 
 export const CRP_IMPLEMENTATION = '0xadc74a134082ea85105258407159fbb428a73782';
 export const SHORT_EXECUTOR = '0xee56e2b3d491590b5b31738cc34d5232f378a8d5';
 export const LONG_EXECUTOR = '0x61910EcD7e8e942136CE7Fe7943f956cea1CC2f7';
-export const PROXY_CRP_ADMIN = SHORT_EXECUTOR;
-export const RESERVE_CONTROLER = '0x1E506cbb6721B83B1549fa1558332381Ffa61A93';
 export const ZERO_ADDRESS: tEthereumAddress = '0x0000000000000000000000000000000000000000';
 
 // PEI constants
@@ -46,7 +42,7 @@ export const RANDOM_ADDRESSES = [
   '0x0000000000000000000000000000000000000721',
 ];
 
-// WOASToken's proxy
+// WOASToken
 export const getTokenPerNetwork = (network: eEthereumNetwork | eOasysNetwork): tEthereumAddress =>
   getParamPerNetwork<tEthereumAddress>(
     {
@@ -55,8 +51,8 @@ export const getTokenPerNetwork = (network: eEthereumNetwork | eOasysNetwork): t
       [eEthereumNetwork.rinkeby]: ZERO_ADDRESS,
       [eEthereumNetwork.kovan]: '0x75AC15EbCA4e93D61bCc878ded9Ba338FD23E761', // Mock WOAS Token
       [eEthereumNetwork.main]: '0x9c0435779F5E52CEC404D957C9bAa6f7d674C8bA',
-      [eOasysNetwork.oasys]: '0xc4335B1b76fA6d52877b3046ECA68F6E708a27dd',
-      [eOasysNetwork.testnet]: '0xb163716cb6c8b0a56e4f57c394A50F173E34181b',
+      [eOasysNetwork.oasys]: WOAS_TOKEN,
+      [eOasysNetwork.testnet]: WOAS_TOKEN,
     },
     network
   );
@@ -98,12 +94,12 @@ export const getAdminPerNetwork = (network: eEthereumNetwork | eOasysNetwork): t
   getParamPerNetwork<tEthereumAddress>(
     {
       [eEthereumNetwork.coverage]: ZERO_ADDRESS,
-      [eEthereumNetwork.hardhat]: '0x8a2Efd9A790199F4c94c6effE210fce0B4724f52',
+      [eEthereumNetwork.hardhat]: '0xc783df8a850f42e7F7e57013759C285caa701eB6',
       [eEthereumNetwork.rinkeby]: ZERO_ADDRESS,
-      [eEthereumNetwork.kovan]: '0x175d905470e85279899C37F89000b195f3d0c0C5', // '0x8134929c3dcb1b8b82f27f53424b959fb82182f2', // Governance
-      [eEthereumNetwork.main]: '0x8a2Efd9A790199F4c94c6effE210fce0B4724f52', // Governance
-      [eOasysNetwork.oasys]: '0xed81c007113D8E532954B735B683260776F3c297', // Emission manager
-      [eOasysNetwork.testnet]: '0x50414Ac6431279824df9968855181474c919a94B', // Deployer
+      [eEthereumNetwork.kovan]: ZERO_ADDRESS,
+      [eEthereumNetwork.main]: ZERO_ADDRESS,
+      [eOasysNetwork.oasys]: '0x21AFfDf04c787EB34f6Eda911d67CbA5D75d7773', // Initial admin
+      [eOasysNetwork.testnet]: '0x21AFfDf04c787EB34f6Eda911d67CbA5D75d7773', // Initial admin
     },
     network
   );
@@ -138,8 +134,8 @@ export const getIncentivesVaultPerNetwork = (
       [eEthereumNetwork.rinkeby]: ZERO_ADDRESS,
       [eEthereumNetwork.kovan]: '0x175d905470e85279899C37F89000b195f3d0c0C5',
       [eEthereumNetwork.main]: '0x253f7b06c1d60c1fbbc9d82c301327eb86e3ba81',
-      [eOasysNetwork.oasys]: '0x4C9d9C197880810724b8eCC3b47b279C9763EC2B',
-      [eOasysNetwork.testnet]: '0x175d905470e85279899C37F89000b195f3d0c0C5', // Dummy
+      [eOasysNetwork.oasys]: '0x4C9d9C197880810724b8eCC3b47b279C9763EC2B', // TODO: update
+      [eOasysNetwork.testnet]: '0x175d905470e85279899C37F89000b195f3d0c0C5', // TODO: update
     },
     network
   );
