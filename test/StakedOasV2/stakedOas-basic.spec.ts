@@ -30,19 +30,12 @@ const { expect } = require('chai');
 makeSuite('StakedToken V2. Basics', (testEnv: TestEnv) => {
   it('deployment StakedOasV2Rev4', async () => {
     const [deployer, user1] = await getEthersSigners();
+    console.log(await deployer.getAddress());
+    await DRE.run(`export-deploy-calldata-${eContractid.StakedOas}`);
+    await DRE.run(`export-deploy-calldata-${eContractid.StakedTokenV2Rev4}`);
 
     await DRE.run(`deploy-${eContractid.StakedOas}`);
-    await DRE.run(`initialize-${eContractid.StakedOas}`, {
-      admin: await deployer.getAddress(),
-    });
-    await DRE.run(`deploy-${eContractid.StakedTokenV2Rev3}`, {
-      emissionManager: await deployer.getAddress(),
-    });
-    await DRE.run(`initialize-${eContractid.StakedTokenV2Rev3}`);
-    await DRE.run(`deploy-${eContractid.StakedTokenV2Rev4}`, {
-      emissionManager: await deployer.getAddress(),
-    });
-    console.log('initialize v4');
+    await DRE.run(`initialize-${eContractid.StakedOas}`, {});
     await DRE.run(`initialize-${eContractid.StakedTokenV2Rev4}`);
     const proxyInstance = StakedTokenV2Rev4__factory.connect(
       (await getStakedOasProxy()).address,

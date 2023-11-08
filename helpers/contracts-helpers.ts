@@ -1,10 +1,38 @@
-import { Contract, Signer, utils } from 'ethers';
+import { BytesLike, Contract, Signer, utils } from 'ethers';
 
 import { DRE, getDb } from './misc-utils';
 import { eContractid, tEthereumAddress } from './types';
 import { Artifact } from 'hardhat/types';
 import { signTypedData_v4 } from 'eth-sig-util';
 import { fromRpcSig, ECDSASignature } from 'ethereumjs-util';
+
+export const saveDeploymentCallData = async (contractId: string, callData: BytesLike) => {
+  const currentNetwork = DRE.network.name;
+  // save calldata into .deployments/calldata/<network>/<contractId>.calldata
+  // directory of this file
+  const path = require('path');
+  const fs = require('fs');
+  const dir = path.join(__dirname, '..', '.deployments', 'calldata', currentNetwork);
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  const fileName = path.join(dir, `${contractId}.calldata`);
+  fs.writeFileSync(fileName, callData);
+};
+export const registerContractAddressInJsonDb = async (
+  contractId: string,
+  address: string,
+  deployer: string
+) => {
+  const currentNetwork = DRE.network.name;
+  await getDb()
+    .set(`${contractId}.${currentNetwork}`, {
+      address: address,
+      deployer: deployer,
+    })
+    .write();
+};
 
 export const registerContractInJsonDb = async (contractId: string, contractInstance: Contract) => {
   const currentNetwork = DRE.network.name;
@@ -26,6 +54,16 @@ export const registerContractInJsonDb = async (contractId: string, contractInsta
       deployer: contractInstance.deployTransaction.from,
     })
     .write();
+};
+
+export const getDeploymentCallData = async (
+  contractName: string,
+  args: any[]
+): Promise<BytesLike> => {
+  const contract = (await DRE.ethers.getContractFactory(contractName)).getDeployTransaction(
+    ...args
+  );
+  return contract.data!;
 };
 
 export const insertContractAddressInDb = async (id: eContractid, address: tEthereumAddress) =>

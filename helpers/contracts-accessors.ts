@@ -1,6 +1,13 @@
 import { StakedTokenV2Rev4 } from './../types/StakedTokenV2Rev4.d';
-import { deployContract, getContractFactory, getContract } from './contracts-helpers';
-import { eContractid, tEthereumAddress } from './types';
+import {
+  deployContract,
+  getContractFactory,
+  getContract,
+  getDeploymentCallData,
+  getEthersSigners,
+  registerContractAddressInJsonDb,
+} from './contracts-helpers';
+import { eContractid, eEthereumNetwork, eOasysNetwork, tEthereumAddress } from './types';
 import { MintableErc20 } from '../types/MintableErc20';
 import { StakedOas } from '../types/StakedOas';
 import { StakedOasV2 } from '../types/StakedOasV2';
@@ -19,9 +26,41 @@ import { verifyContract } from './etherscan-verification';
 import { ATokenMock } from '../types/ATokenMock';
 import { getDb, DRE } from './misc-utils';
 import { DoubleTransferHelper } from '../types/DoubleTransferHelper';
-import { ZERO_ADDRESS } from './constants';
+import {
+  STAKED_TOKEN_DECIMALS,
+  STAKED_TOKEN_NAME,
+  STAKED_TOKEN_SYMBOL,
+  ZERO_ADDRESS,
+  getAdminPerNetwork,
+  getCooldownSecondsPerNetwork,
+  getDistributionDurationPerNetwork,
+  getUnstakeWindowPerNetwork,
+} from './constants';
 import { Signer } from 'ethers';
 import { StakedTokenBptRev2, StakedTokenV2Rev3 } from '../types';
+
+export const deploy = async (id: eContractid, network: string) => {
+  const path = require('path');
+  const fs = require('fs');
+  const dir = path.join(__dirname, '..', '.deployments', 'calldata', network);
+  const file = path.join(dir, `${id}.calldata`);
+  if (!fs.existsSync(file)) {
+    throw new Error(`File ${file} not found`);
+  }
+  const calldata = fs.readFileSync(file, 'utf8');
+  const signer = (await getEthersSigners())[0];
+  const tx = await signer.sendTransaction({
+    data: calldata,
+    to: undefined,
+    type: 2,
+  });
+  const receipt = await tx.wait();
+  await registerContractAddressInJsonDb(id, receipt.contractAddress!, receipt.from);
+  console.log(
+    `\t ${id} deployed tx: ${receipt.transactionHash}, address: ${receipt.contractAddress}`
+  );
+  return receipt;
+};
 
 export const deployStakedOas = async (
   [cooldownSeconds, unstakeWindow, emissionManager, distributionDuration]: [
@@ -39,6 +78,38 @@ export const deployStakedOas = async (
     await verifyContract(instance.address, args);
   }
   return instance;
+};
+export const exportStakedOasDeploymentCallData = async () => {
+  const id = eContractid.StakedOas;
+  return await getDeploymentCallData(
+    id,
+    await getDeployArgs(DRE.network.name as eEthereumNetwork | eOasysNetwork, id)
+  );
+};
+
+export const getDeployArgs = async (network: eEthereumNetwork | eOasysNetwork, id: eContractid) => {
+  switch (id) {
+    case eContractid.StakedOas:
+      return [
+        getCooldownSecondsPerNetwork(network),
+        getUnstakeWindowPerNetwork(network),
+        await getAdminPerNetwork(network),
+        getDistributionDurationPerNetwork(network),
+      ];
+    case eContractid.StakedTokenV2Rev4:
+      return [
+        getCooldownSecondsPerNetwork(network),
+        getUnstakeWindowPerNetwork(network),
+        await getAdminPerNetwork(network),
+        getDistributionDurationPerNetwork(network),
+        STAKED_TOKEN_NAME,
+        STAKED_TOKEN_SYMBOL,
+        `${STAKED_TOKEN_DECIMALS}`,
+        ZERO_ADDRESS,
+      ];
+    default:
+      return [];
+  }
 };
 
 export const deployStakedOasV2 = async (
@@ -131,40 +202,22 @@ export const deployStakedTokenV2 = async (
 
 export const deployStakedTokenV2Revision4 = async (
   [
-    stakedToken,
-    rewardsToken,
     cooldownSeconds,
     unstakeWindow,
-    rewardsVault,
     emissionManager,
     distributionDuration,
     name,
     symbol,
     decimals,
     governance,
-  ]: [
-    tEthereumAddress,
-    tEthereumAddress,
-    string,
-    string,
-    tEthereumAddress,
-    tEthereumAddress,
-    string,
-    string,
-    string,
-    string,
-    tEthereumAddress
-  ],
+  ]: [string, string, tEthereumAddress, string, string, string, string, tEthereumAddress],
   verify?: boolean,
   signer?: Signer
 ) => {
   const id = eContractid.StakedTokenV2Rev4;
   const args: string[] = [
-    stakedToken,
-    rewardsToken,
     cooldownSeconds,
     unstakeWindow,
-    rewardsVault,
     emissionManager,
     distributionDuration,
     name,
@@ -177,6 +230,14 @@ export const deployStakedTokenV2Revision4 = async (
     await verifyContract(instance.address, args);
   }
   return instance;
+};
+
+export const exportStakedTokenV2Rev4DeploymentCallData = async () => {
+  const id = eContractid.StakedTokenV2Rev4;
+  return await getDeploymentCallData(
+    id,
+    await getDeployArgs(DRE.network.name as eEthereumNetwork | eOasysNetwork, id)
+  );
 };
 
 export const deployStakedTokenV2Revision3 = async (
@@ -377,6 +438,10 @@ export const deployInitializableAdminUpgradeabilityProxy = async (
     await verifyContract(instance.address, args);
   }
   return instance;
+};
+export const exportInitializableAdminUpgradeabilityProxyDeploymentCallData = async () => {
+  const id = eContractid.InitializableAdminUpgradeabilityProxy;
+  return await getDeploymentCallData(id, []);
 };
 
 export const deployMockTransferHook = async () =>

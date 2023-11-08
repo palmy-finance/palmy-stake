@@ -114,11 +114,8 @@ export const testDeployStakedOasV2 = async (
   );
 
   const StakedOasImpl = await deployStakedTokenV2Revision4([
-    stakedToken,
-    rewardsToken,
     COOLDOWN_SECONDS,
     UNSTAKE_WINDOW,
-    vaultOfRewardsAddress,
     emissionManager,
     (1000 * 60 * 60).toString(),
     'Staked OAS',
@@ -127,7 +124,11 @@ export const testDeployStakedOasV2 = async (
     ZERO_ADDRESS,
   ]);
 
-  const StakedOasEncodedInitialize = StakedOasImpl.interface.encodeFunctionData('initialize');
+  const StakedOasEncodedInitialize = StakedOasImpl.interface.encodeFunctionData('initialize', [
+    stakedToken,
+    rewardsToken,
+    vaultOfRewardsAddress,
+  ]);
 
   await StakedOasProxy.connect(restWallets[0]).upgradeToAndCall(
     StakedOasImpl.address,

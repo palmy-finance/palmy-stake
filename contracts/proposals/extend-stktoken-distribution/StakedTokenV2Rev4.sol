@@ -1410,15 +1410,15 @@ contract StakedTokenV2Rev4 is
   /// @dev Start of Storage layout from StakedToken v1
   uint256 public constant REVISION = 4;
 
-  IERC20 public immutable STAKED_TOKEN;
-  IERC20 public immutable REWARD_TOKEN;
+  IERC20 public STAKED_TOKEN;
+  IERC20 public REWARD_TOKEN;
   uint256 public immutable COOLDOWN_SECONDS;
 
   /// @notice Seconds available to redeem once the cooldown period is fullfilled
   uint256 public immutable UNSTAKE_WINDOW;
 
   /// @notice Address to pull from the rewards, needs to have approved this contract
-  address public immutable REWARDS_VAULT;
+  address public REWARDS_VAULT;
 
   mapping(address => uint256) public stakerRewardsToClaim;
   mapping(address => uint256) public stakersCooldowns;
@@ -1450,11 +1450,8 @@ contract StakedTokenV2Rev4 is
   event Cooldown(address indexed user);
 
   constructor(
-    IERC20 stakedToken,
-    IERC20 rewardToken,
     uint256 cooldownSeconds,
     uint256 unstakeWindow,
-    address rewardsVault,
     address emissionManager,
     uint128 distributionDuration,
     string memory name,
@@ -1462,11 +1459,8 @@ contract StakedTokenV2Rev4 is
     uint8 decimals,
     address governance
   ) public ERC20(name, symbol) DistributionManager(emissionManager, distributionDuration) {
-    STAKED_TOKEN = stakedToken;
-    REWARD_TOKEN = rewardToken;
     COOLDOWN_SECONDS = cooldownSeconds;
     UNSTAKE_WINDOW = unstakeWindow;
-    REWARDS_VAULT = rewardsVault;
     _governance = ITransferHook(governance);
     ERC20._setupDecimals(decimals);
   }
@@ -1474,7 +1468,15 @@ contract StakedTokenV2Rev4 is
   /**
    * @dev Called by the proxy contract
    **/
-  function initialize() external initializer {}
+  function initialize(
+    address stakedToken,
+    address rewardToken,
+    address rewardsVault
+  ) external initializer {
+    STAKED_TOKEN = IERC20(stakedToken);
+    REWARD_TOKEN = IERC20(rewardToken);
+    REWARDS_VAULT = rewardsVault;
+  }
 
   function stake(address onBehalfOf, uint256 amount) external override {
     require(amount != 0, 'INVALID_ZERO_AMOUNT');

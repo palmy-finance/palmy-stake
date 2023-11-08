@@ -14,10 +14,7 @@ import {
   STAKED_TOKEN_SYMBOL,
   STAKED_TOKEN_DECIMALS,
 } from '../../helpers/constants';
-import {
-  deployStakedTokenV2Revision3,
-  deployStakedTokenV2Revision4,
-} from '../../helpers/contracts-accessors';
+import { deployStakedTokenV2Revision4 } from '../../helpers/contracts-accessors';
 import { checkVerification } from '../../helpers/etherscan-verification';
 import { notFalsyOrZeroAddress } from '../../helpers/misc-utils';
 const { StakedTokenV2Rev4 } = eContractid;
@@ -60,16 +57,13 @@ task(`deploy-${StakedTokenV2Rev4}`, `Deploys the ${StakedTokenV2Rev4} contract`)
     if (!notFalsyOrZeroAddress(vault)) {
       throw new Error('mising vault address');
     }
-    if (!notFalsyOrZeroAddress(emissionManager)) {
+    if (!notFalsyOrZeroAddress(em)) {
       throw new Error('mising emission manager');
     }
     const stakedTokenImpl = await deployStakedTokenV2Revision4(
       [
-        token,
-        token,
         getCooldownSecondsPerNetwork(network),
         getUnstakeWindowPerNetwork(network),
-        vault,
         em,
         getDistributionDurationPerNetwork(network),
         STAKED_TOKEN_NAME,
