@@ -2,8 +2,6 @@ import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 
 import { eContractid, eEthereumNetwork, eOasysNetwork } from '../../helpers/types';
-import { checkVerification } from '../../helpers/etherscan-verification';
-import { getAdminPerNetwork } from '../../helpers/constants';
 require('dotenv').config();
 
 task('common-initialization', 'Initialize contracts').setAction(async ({}, localBRE) => {
