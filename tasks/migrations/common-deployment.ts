@@ -4,6 +4,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { eContractid, eEthereumNetwork, eOasysNetwork } from '../../helpers/types';
 import { checkVerification } from '../../helpers/etherscan-verification';
 import { getAdminPerNetwork } from '../../helpers/constants';
+import { printContracts } from '../../helpers/contracts-accessors';
 require('dotenv').config();
 
 task('common-deployment', 'Deployment in for Main, Kovan networks').setAction(
@@ -32,19 +33,6 @@ task('common-deployment', 'Deployment in for Main, Kovan networks').setAction(
     await DRE.run(`deploy-${eContractid.StakedOas}`, {});
     await DRE.run(`deploy-${eContractid.StakedTokenV2Rev4}`, {});
     console.log(`\n✔️ Finished the deployment of the Oas Token ${network} Enviroment. ✔️`);
-
-    //   await DRE.run(`initialize-${eContractid.StakedOas}`, {
-    //     admin: admin,
-    //   });
-    //
-    //   await DRE.run(`deploy-${eContractid.StakedTokenV2Rev3}`);
-    //
-    //   await DRE.run(`initialize-${eContractid.StakedTokenV2Rev3}`, {
-    //     admin: admin,
-    //   });
-    //   await DRE.run(`initialize-${eContractid.StakedTokenV2Rev4}`, {
-    //     admin: admin,
-    //   });
-    //   console.log(`\n✔️ Finished the deployment of the Oas Token ${network} Enviroment. ✔️`);
+    printContracts();
   }
 );

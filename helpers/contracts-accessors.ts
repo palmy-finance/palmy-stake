@@ -62,6 +62,29 @@ export const deploy = async (id: eContractid, network: string) => {
   return receipt;
 };
 
+interface DbEntry {
+  [network: string]: {
+    deployer: string;
+    address: string;
+  };
+}
+
+export const printContracts = () => {
+  const network = DRE.network.name;
+  const db = getDb();
+  console.log('Contracts deployed at', network);
+  console.log('---------------------------------');
+
+  const entries = Object.entries<DbEntry>(db.getState()).filter(([_k, value]) => !!value[network]);
+
+  const contractsPrint = entries.map(
+    ([key, value]: [string, DbEntry]) => `${key}: ${value[network].address}`
+  );
+
+  console.log('N# Contracts:', entries.length);
+  console.log(contractsPrint.join('\n'), '\n');
+};
+
 export const deployStakedOas = async (
   [cooldownSeconds, unstakeWindow, emissionManager, distributionDuration]: [
     string,
