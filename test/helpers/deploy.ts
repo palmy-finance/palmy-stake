@@ -3,9 +3,6 @@ import {
   PSM_STAKER_PREMIUM,
   COOLDOWN_SECONDS,
   UNSTAKE_WINDOW,
-  STAKED_TOKEN_NAME,
-  STAKED_TOKEN_SYMBOL,
-  STAKED_TOKEN_DECIMALS,
   MAX_UINT_AMOUNT,
   ZERO_ADDRESS,
 } from '../../helpers/constants';
@@ -14,8 +11,6 @@ import {
   deployIncentivesController,
   deployStakedOas,
   deployMockTransferHook,
-  deployStakedOasV2,
-  deployStakedTokenV2Revision3,
   deployStakedTokenV2Revision4,
 } from '../../helpers/contracts-accessors';
 import { insertContractAddressInDb } from '../../helpers/contracts-helpers';

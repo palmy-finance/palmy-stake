@@ -1,20 +1,7 @@
 import { task } from 'hardhat/config';
 
 import { eOasysNetwork, eContractid, eEthereumNetwork } from '../../helpers/types';
-import { getEthersSigners, registerContractInJsonDb } from '../../helpers/contracts-helpers';
-import {
-  getCooldownSecondsPerNetwork,
-  getUnstakeWindowPerNetwork,
-  getAdminPerNetwork,
-  getDistributionDurationPerNetwork,
-} from '../../helpers/constants';
-import {
-  deployStakedOas,
-  deployInitializableAdminUpgradeabilityProxy,
-  deploy,
-} from '../../helpers/contracts-accessors';
-import { checkVerification } from '../../helpers/etherscan-verification';
-import { ethers } from 'hardhat';
+import { deploy } from '../../helpers/contracts-accessors';
 
 const { StakedOas, StakedOasImpl } = eContractid;
 
