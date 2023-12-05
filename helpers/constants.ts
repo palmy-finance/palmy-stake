@@ -1,5 +1,6 @@
 import { eOasysNetwork, eEthereumNetwork, tEthereumAddress } from './types';
 import { getParamPerNetwork } from './misc-utils';
+export const PERMISSIONED_CONTRACT_FACTORY_ADDRESS = '0x123e3ae459a8D049F27Ba62B8a5D48c68A100EBC';
 
 export const MAX_UINT_AMOUNT =
   '115792089237316195423570985008687907853269984665640564039457584007913129639935';

@@ -1,10 +1,23 @@
 import { BytesLike, Contract, Signer, utils } from 'ethers';
 
 import { DRE, getDb } from './misc-utils';
-import { eContractid, tEthereumAddress } from './types';
+import { eContractid, eOasysNetwork, tEthereumAddress } from './types';
 import { Artifact } from 'hardhat/types';
 import { signTypedData_v4 } from 'eth-sig-util';
 import { fromRpcSig, ECDSASignature } from 'ethereumjs-util';
+import { IPermissionedContractFactory__factory } from '../types/factories/IPermissionedContractFactory__factory';
+import { PERMISSIONED_CONTRACT_FACTORY_ADDRESS } from './constants';
+export const getOasysDeploymentAddress = async (contractId: string, callData: BytesLike) => {
+  // Calculate the length of calldata in hex, padding to 64 characters
+  const instance = IPermissionedContractFactory__factory.connect(
+    PERMISSIONED_CONTRACT_FACTORY_ADDRESS,
+    DRE.ethers.provider
+  );
+  return await instance.getDeploymentAddress(callData, toSalt(contractId));
+};
+const toSalt = (contractId: string) => {
+  return utils.hexlify(utils.sha256(utils.toUtf8Bytes(contractId)));
+};
 
 export const saveDeploymentCallData = async (contractId: string, callData: BytesLike) => {
   const currentNetwork = DRE.network.name;
@@ -19,6 +32,29 @@ export const saveDeploymentCallData = async (contractId: string, callData: Bytes
   }
   const fileName = path.join(dir, `${contractId}.calldata`);
   fs.writeFileSync(fileName, callData);
+  if ((currentNetwork as eOasysNetwork) == eOasysNetwork.oasys) {
+    await registerContractAddressAndSaltInJsonDb(
+      contractId,
+      await getOasysDeploymentAddress(contractId, callData),
+      '',
+      toSalt(contractId)
+    );
+  }
+};
+const registerContractAddressAndSaltInJsonDb = async (
+  contractId: string,
+  address: string,
+  deployer: string,
+  salt: string
+) => {
+  const currentNetwork = DRE.network.name;
+  await getDb()
+    .set(`${contractId}.${currentNetwork}`, {
+      address: address,
+      deployer: deployer,
+      salt: salt,
+    })
+    .write();
 };
 export const registerContractAddressInJsonDb = async (
   contractId: string,
