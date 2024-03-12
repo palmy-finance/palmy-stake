@@ -141,10 +141,16 @@ contract IncentivesController is
 
     if (stake) {
       amountToClaim = amountToClaim.add(amountToClaim.mul(EXTRA_PSM_REWARD).div(100));
-      REWARD_TOKEN.transferFrom(REWARDS_VAULT, address(this), amountToClaim);
+      require(
+        REWARD_TOKEN.transferFrom(REWARDS_VAULT, address(this), amountToClaim),
+        'IncentivesController: transfer failed'
+      );
       PSM.stake(to, amountToClaim);
     } else {
-      REWARD_TOKEN.transferFrom(REWARDS_VAULT, to, amountToClaim);
+      require(
+        REWARD_TOKEN.transferFrom(REWARDS_VAULT, to, amountToClaim),
+        'IncentivesController: transfer failed'
+      );
     }
     emit RewardsClaimed(msg.sender, to, amountToClaim);
 
