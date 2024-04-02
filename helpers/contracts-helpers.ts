@@ -16,7 +16,7 @@ export const getOasysDeploymentAddress = async (contractId: string, callData: By
   return await instance.getDeploymentAddress(callData, toSalt(contractId));
 };
 const toSalt = (contractId: string) => {
-  return utils.hexlify(utils.sha256(utils.toUtf8Bytes(contractId)));
+  return utils.hexlify(utils.sha256(utils.toUtf8Bytes(contractId + 'palmy-finance')));
 };
 
 export const saveDeploymentCallData = async (contractId: string, callData: BytesLike) => {
