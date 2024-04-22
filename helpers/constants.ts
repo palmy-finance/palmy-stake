@@ -135,7 +135,7 @@ export const getIncentivesVaultPerNetwork = (
       [eEthereumNetwork.rinkeby]: ZERO_ADDRESS,
       [eEthereumNetwork.kovan]: '0x175d905470e85279899C37F89000b195f3d0c0C5',
       [eEthereumNetwork.main]: '0x253f7b06c1d60c1fbbc9d82c301327eb86e3ba81',
-      [eOasysNetwork.oasys]: 'TODO', // TODO: update
+      [eOasysNetwork.oasys]: '0x20d9B9D7D20CafD3FeAB504A2BC39592a860C00d',
       [eOasysNetwork.testnet]: '0xaf15E4465402592b48E75D1f9984ec2789ddfa97',
     },
     network
