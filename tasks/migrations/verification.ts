@@ -17,17 +17,12 @@ task('verification', 'Verify contracts').setAction(async ({}, localBRE) => {
   }
   const network = localBRE.network.name as eEthereumNetwork;
 
-  await verifyContract(
-    (
-      await getStakedOas()
-    ).address,
-    await getDeployArgs(network, eContractid.StakedOas)
-  );
+  await verifyContract((await getStakedOas()).address, []);
   await verifyContract(
     (
       await getStakedOasImpl()
     ).address,
-    await getDeployArgs(network, eContractid.StakedOasImpl)
+    await getDeployArgs(network, eContractid.StakedOas)
   );
   await verifyContract(
     (
